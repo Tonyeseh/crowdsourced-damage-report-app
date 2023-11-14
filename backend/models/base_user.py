@@ -1,17 +1,20 @@
 #!/usr/bin/python3
 """holds User model"""
+
 from hashlib import md5
 from typing import Any
 from models.base_model import BaseModel
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 
 
-class User(BaseModel):
-    """Representation of a User"""
-    email = ""
-    password = ""
-    first_name = ""
-    last_name = ""
-    account_type = ""
+class BaseUser(BaseModel):
+    """Representation of a BaseUser"""
+    email = Column(String(128), nullable=False)
+    password = Column(String(128), nullable=False)
+    first_name = Column(String(128), nullable=False)
+    last_name = Column(String(128), nullable=False)
+    # account_type = ""
 
     def __init__(self, *args, **kwargs) -> None:
         """initialises user"""

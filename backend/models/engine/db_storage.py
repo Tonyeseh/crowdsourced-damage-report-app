@@ -8,14 +8,14 @@ from models.damage_category import DamageCategory
 from models.facility import Facility
 from models.infrastructure import Infrastructure
 from models.location import Location
-from models.user import User
+from models.student_user import StudentUser
 from models.working_on import WorkingOn
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 
-classes = {"Damages": Damages, "DamageCategory": DamageCategory, "Facility": Facility, "Infrastructure": Infrastructure, "Location": Location, "User": User, "WorkingOn": WorkingOn}
+classes = {"Damages": Damages, "DamageCategory": DamageCategory, "Facility": Facility, "Infrastructure": Infrastructure, "Location": Location, "StudentUser": StudentUser, "WorkingOn": WorkingOn}
 
 class DBStorage:
     """DB Storage class"""
