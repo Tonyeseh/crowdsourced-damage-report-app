@@ -1,11 +1,16 @@
 #!/usr/bin/python3
 """holds Damage category class"""
-from models.base_model import BaseModel
+
+from sqlalchemy import Column, String
+from models.base_model import BaseModel, Base
+from sqlalchemy.orm import relationship
 
 
-class DamageCategory(BaseModel):
+class DamageCategory(BaseModel, Base):
     """Representation of DamageCategory"""
-    name: str = ""
+    __tablename__ = 'categories'
+    name = Column(String(128), nullable=False)
 
     def __init__(self, *args, **kwargs) -> None:
+        """Initialises DamageCategory"""
         super().__init__(*args, **kwargs)

@@ -1,14 +1,24 @@
 #!/usr/bin/env python3
 """Base model"""
+
 from datetime import datetime
+import models
+import sqlalchemy
+from sqlalchemy import Column, String, DateTime
+from sqlalchemy.ext.declarative import declarative_base
 import uuid
 from typing import Mapping
 
 time = "%Y-%m-%dT%H:%M:%S.%f"
 
+Base = declarative_base()
+
 
 class BaseModel:
     """BaseModel from which all other models inherit"""
+    id = Column(String(60), primary_key=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow)
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialisation to the base model"""
@@ -64,3 +74,7 @@ class BaseModel:
     def save(self) -> None:
         """updates the update_at with the current time"""
         self.updated_at = datetime.utcnow()
+
+    def delete(self):
+        """delete the current instance from the storage"""
+        models.storage.delete(self)
