@@ -3,19 +3,20 @@
 
 import models
 from models.base_model import Base
-from models.damage import Damages
+from models.damage import Damage
 from models.damage_category import DamageCategory
 from models.facility import Facility
 from models.infrastructure import Infrastructure
 from models.location import Location
 from models.student_user import StudentUser
 from models.working_on import WorkingOn
+from os import getenv
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 
-classes = {"Damages": Damages, "DamageCategory": DamageCategory, "Facility": Facility, "Infrastructure": Infrastructure, "Location": Location, "StudentUser": StudentUser, "WorkingOn": WorkingOn}
+classes = {"Damages": Damage, "DamageCategory": DamageCategory, "Facility": Facility, "Infrastructure": Infrastructure, "Location": Location, "StudentUser": StudentUser, "WorkingOn": WorkingOn}
 
 class DBStorage:
     """DB Storage class"""
@@ -26,10 +27,10 @@ class DBStorage:
 
     def __init__(self) -> None:
         """Instantiate a DBStorage object"""
-        DB_USER = None
-        DB_PWD = None
-        DB_HOST = None
-        DB_NAME = None
+        DB_USER = getenv('CSRAPP_DEV')
+        DB_PWD = getenv('CSRAPP_DEV_PWD')
+        DB_HOST = getenv('localhost')
+        DB_NAME = getenv('CSRAPP_DB')
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(DB_USER, DB_PWD, DB_HOST, DB_NAME))
         if False:
             Base.metadata.drop_all(self.__engine)
