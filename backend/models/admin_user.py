@@ -5,5 +5,6 @@ from models.base_model import Base
 
 class AdminUser(BaseUser, Base):
     """Representation of AdminUser"""
+    __tablename__ = "admin_users"
 
     
