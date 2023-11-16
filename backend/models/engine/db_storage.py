@@ -24,8 +24,6 @@ class DBStorage:
     """DB Storage class"""
     __session = None
     __engine = None
-    __db_string = ""
-    __objects = {}
 
     def __init__(self) -> None:
         """Instantiate a DBStorage object"""
@@ -38,15 +36,15 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """returns all objects"""
-        if cls is not None:
-            new_dict = {}
-            for key, value in self.objects.items():
-                if cls in key:
-                    new_dict[key] = value
-            return new_dict
-        
-        return self.__objects
+        """query on the current database session"""
+        new_dict = {}
+        for clss in classes:
+            if cls is None or cls is classes[clss] or cls is clss:
+                objs = self.__session.query(classes[clss]).all()
+                for obj in objs:
+                    key = obj.__class__.__name__ + '.' + obj.id
+                    new_dict[key] = obj
+        return (new_dict)
     
     def new(self, obj):
         """add the object to the current database session"""
@@ -78,7 +76,7 @@ class DBStorage:
             return None
         
         all_cls_obj = models.storage.all(cls)
-        for value in all_cls_obj.value():
+        for value in all_cls_obj.values():
             if value.id == id:
                 return value
         

@@ -8,9 +8,9 @@ from sqlalchemy.orm import relationship
 class Facility(BaseModel, Base):
     """Representation of a Facility"""
     __tablename__ = "facilities"
-    name: str = Column(String(128), nullable=False)
-    infrastructure_id: str = Column(String(60), ForeignKey('infrastructures.id'), nullable=False)
-    description: str = Column(String(1024), nullable=False)
+    name = Column(String(128), nullable=False)
+    infrastructure_id = Column(String(60), ForeignKey('infrastructures.id'), nullable=False)
+    description = Column(String(1024), nullable=False)
     damages = relationship("Damage", backref="facilities", cascade="all, delete, delete-orphan")
     # category_id: str = Column(String(60), ForeignKey('categories.id'), nullable=False)
 
