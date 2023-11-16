@@ -10,4 +10,7 @@ class StudentUser(BaseUser, Base):
     """Representation of a StudentUser"""
 
     __tablename__ = "student_users"
-    reports = relationship("Damage", backref="studentuser")
+    reports = relationship("Damage", backref="student_users")
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)

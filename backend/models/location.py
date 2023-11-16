@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 """holds location City"""
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
 
-class Location(BaseModel):
+class Location(BaseModel, Base):
     """Representation of a Location"""
     __tablename__ = "locations"
     name: str = Column(String(128), nullable=False)

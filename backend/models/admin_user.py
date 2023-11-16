@@ -7,4 +7,6 @@ class AdminUser(BaseUser, Base):
     """Representation of AdminUser"""
     __tablename__ = "admin_users"
 
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
     
