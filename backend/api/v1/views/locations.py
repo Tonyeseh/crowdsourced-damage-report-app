@@ -7,10 +7,11 @@ from flask import abort, jsonify, make_response, request
 from models import storage
 from models.location import Location
 
-@app_views.route('/locations', methods=['POST'], strict_slashes=False)
+@app_views.route('/locations', methods=['GET'], strict_slashes=False)
 def get_all_locations():
     """ get all locations """
     all_locations = storage.all(Location)
+    all_locations = [location.to_dict() for location in all_locations.values()]
     return jsonify(all_locations)
 
 @app_views.route('/locations/<location_id>', methods=['GET'], strict_slashes=False)
@@ -45,7 +46,7 @@ def delete_location(location_id):
     if not location:
         abort(404)
 
-    location.delete()
+    storage.delete(location)
 
     storage.save()
     return make_response(jsonify({}), 200)
@@ -66,6 +67,8 @@ def put_location(location_id):
     for key, value in data.items():
         if key not in ignore:
             setattr(location, key, value)
+
+    storage.save()
 
     return make_response(jsonify(location.to_dict()), 200)
     
