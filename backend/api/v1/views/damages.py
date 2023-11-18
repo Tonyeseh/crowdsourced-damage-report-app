@@ -2,6 +2,9 @@
 """ Damages Route module """
 
 from crypt import methods
+from os import getcwd, mkdir, path
+from tarfile import SUPPORTED_TYPES
+from typing import Dict, List
 from flask import abort, jsonify, make_response, request
 from models import storage
 from models.facility import Facility
@@ -10,6 +13,24 @@ from models.damage import Damage
 from models.student_user import StudentUser
 from models.damage_category import DamageCategory
 from api.v1.views import app_views
+from werkzeug.utils import secure_filename
+
+# helper functions
+def add_damage_info(damage: Damage):
+    """adds some information to the damage object"""
+
+    damage.facility_name =  damage.facilities.name
+    damage.infrastructure_name = damage.facilities.infrastructures.name
+    damage.img_url = [f'/images/{damage.id}/{img.name}' for img in damage.images]
+
+    damage = damage.to_dict()
+
+    remove_irrelevant_info(damage)
+    return damage
+
+def remove_irrelevant_info(damage):
+    del damage['facilities']
+    del damage['images']
 
 # get all damages
 @app_views.route('/damages', methods=['GET'], strict_slashes=False)
@@ -20,9 +41,12 @@ def get_damages():
     if not all_damages:
         abort(404)
 
-    all_damages = [dam.to_dict() for dam in all_damages.values()]
+    all_damages_lst = []
 
-    return jsonify(all_damages)
+    for dam in all_damages.values():
+        all_damages_lst.append(add_damage_info(dam))
+
+    return jsonify(all_damages_lst)
 
 # get all damages in a facility
 @app_views.route('/facilities/<facility_id>/damages', methods=['GET'], strict_slashes=False)
@@ -33,8 +57,13 @@ def get_facility_damage(facility_id):
     if not facility:
         abort(404, description="Facility doesn't exist")
 
-    damages = [dam.to_dict() for dam in facility.damages]
-    return jsonify(damages)
+    damages = facility.damages
+
+    damages_lst = []
+    for dam in damages:
+        damages_lst.append(add_damage_info(dam))
+
+    return jsonify(damages_lst)
 
 # get a damage
 @app_views.route('/damages/<damage_id>', methods=['GET'], strict_slashes=False)
@@ -45,39 +74,57 @@ def get_damage(damage_id):
     if not damage:
         abort(404)
 
-    return jsonify(damage.to_dict())
+    return jsonify(add_damage_info(damage))
 
 # post a damage
 @app_views.route('/facilities/<facility_id>/damages', methods=['POST'], strict_slashes=False)
 def post_damage(facility_id):
     """ posts a facility """
-    if not request.get_json():
-        abort(400, description="Not a JSON")
+    supported_types = ['jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp', 'gif', 'apng', 'png', 'avif', 'svg', 'webp', 'mp4', 'ogg', 'WebM']
+    current_path = getcwd()
+
+    formData = request.form.to_dict()
+    files = request.files.to_dict()
+    # if not request.get_json():
+    #     abort(400, description="Not a JSON")
 
     facility = storage.get(Facility, facility_id)
 
     if not facility:
         abort(404, description="Facility doesn't exist")
 
-    data = request.get_json()
+    print(request.form)
+    print(request.files)
 
-    damage_attr = ['priority', 'description']
+    damage_attr = ['description']
     for attr in damage_attr:
-        if attr not in data.keys():
+        if attr not in formData.keys():
             abort(400, description="{attr} is missing.".format(attr=attr))
 
-    instance = Damage(**data)
+    category = storage.all()[list(storage.all(DamageCategory).keys())[0]]
+    student = storage.all()[list(storage.all(StudentUser).keys())[0]]
+
+    instance = Damage(**formData)
     instance.facility_id = facility.id
-    instance.reporter_id = StudentUser(email="dummy@mail.com", password="dummy_password", first_name="dummy first_name", last_name="dummy last_name")
-    instance.category_id = DamageCategory(name="electricity")
-
-    image = Image(name="one_image")
-    image.damage_id = instance
-
+    instance.reporter_id = student.id
+    instance.category_id = category.id
     instance.save()
 
-    
-    return make_response(jsonify(instance.to_dict()), 201)
+    image_dir = f'{current_path}/images/{instance.id}'
+    try:
+        mkdir(image_dir)
+    except:
+        print('already exists')
+
+
+    for file in files.values():
+        filename = secure_filename(file.filename)
+        image = Image(name=filename)
+        image.damage_id = instance.id
+        image.save()
+        file.save(path.join(image_dir, filename))
+
+    return make_response(jsonify(add_damage_info(instance)), 201)
 
 # put a damage
 @app_views.route('/damages/<damage_id>', methods=['PUT'], strict_slashes=False)
@@ -91,7 +138,16 @@ def put_damage(damage_id):
     if not damage:
         abort(404)
 
-    return make_response(jsonify(damage.to_dict()), 200)
+
+    ignore = ['id', 'updated_at', 'created_at']
+    data = request.get_json()
+
+    for key, value in data.items():
+        if key not in ignore:
+            setattr(damage, key, value)
+
+
+    return make_response(jsonify(add_damage_info(damage)), 200)
 
 # delete a damage
 @app_views.route('/damages/<damage_id>', methods=['DELETE'], strict_slashes=False)

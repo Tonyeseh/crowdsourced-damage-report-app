@@ -21,8 +21,8 @@ def get_facilities():
     return jsonify(all_facilities)
 
 # get all facilities from infrastructure
-@app_views.route('/infrastructures/<infras_id>/infrastructures', methods=['GET'], strict_slashes=False)
-def get_infrastructures_from_loc(infras_id):
+@app_views.route('/infrastructures/<infras_id>/facilities', methods=['GET'], strict_slashes=False)
+def get_facilities_from_infras(infras_id):
     """get all facilities from Infrastructure """
     infrastructure = storage.get(Infrastructure, infras_id)
 
@@ -45,7 +45,7 @@ def get_facility(facility_id):
     return jsonify(facility.to_dict())
 
 # post a facility
-@app_views.route('infrastructures/<infras_id>/facilities/', methods=['POST'], strict_slashes=False)
+@app_views.route('infrastructures/<infras_id>/facilities', methods=['POST'], strict_slashes=False)
 def post_facility(infras_id):
     """ add an facility """
     if not request.get_json():

@@ -10,7 +10,7 @@ from api.v1.views import app_views
 
 
 # get all
-@app_views.route('/infrastuctures', methods=['GET'], strict_slashes=False)
+@app_views.route('/infrastructures', methods=['GET'], strict_slashes=False)
 def get_infrastructures():
     """ gets all infrastructures """
     all_infras = storage.all(Infrastructure)
@@ -47,11 +47,13 @@ def get_infrastructures_from_loc(location_id):
     return jsonify(loc_infras)
 
 # post
-@app_views.route('locations/<location_id>/infrastuctures/', methods=['POST'], strict_slashes=False)
+@app_views.route('locations/<location_id>/infrastructures', methods=['POST'], strict_slashes=False)
 def post_infrastructure(location_id):
     """ add an Infrastructure """
     if not request.get_json():
         abort(400, description="Not a JSON")
+
+    print("location", location_id)
 
     location = storage.get(Location, location_id)
     if not location:
