@@ -65,19 +65,19 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white " href="../pages/location.html">
+          <a class="nav-link text-white active bg-gradient-primary" href="../pages/location.html">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons opacity-10">place</i>
+              <i class="material-icons opacity-10">receipt_long</i>
             </div>
             <span class="nav-link-text ms-1">Locations</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white " href="../pages/infrastructure.html">
+          <a class="nav-link text-white " href="../pages/virtual-reality.html">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">view_in_ar</i>
             </div>
-            <span class="nav-link-text ms-1">Infrastructure</span>
+            <span class="nav-link-text ms-1">Virtual Reality</span>
           </a>
         </li>
         <li class="nav-item">
@@ -256,7 +256,7 @@
           <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
               <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">Locations table</h6>
+                <h6 class="text-white text-capitalize ps-3">Infrastructures</h6>
               </div>
             </div>
             <div class="card-body px-0 pb-2">
@@ -286,18 +286,26 @@
           <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
               <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">Add Location</h6>
+                <h6 class="text-white text-capitalize ps-3">Add Infrastructure</h6>
               </div>
             </div>
             <div class="card-body px-0 pb-2 mx-3">
 
                 <form role="form">
+                    <select id="location" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                        <option selected>Pick a Location</option>
+                    </select>
                     <div class="input-group input-group-outline mb-3">
-                      <label class="form-label">Location Name</label>
-                      <input type="text" class="form-control" id="location-name">
-                        <div class="text-center input-group-append">
-                            <button type="button" class="btn bg-gradient-primary btn-lg w-100 mb-0" id="submit-location">Add</button>
-                        </div>
+                      <label class="form-label">Infrastructure Name</label>
+                      <input type="text" class="form-control" id="infras-name">
+                    </div>
+                    <label for="description" class="form-label">Description of Damage</label>
+                    <div class="input-group input-group-outline mb-3">
+                      <textarea class="form-control" id="description" rows="4"></textarea>
+                    </div>
+                    <div>
+                    <div class="text-center input-group-append">
+                        <button type="button" class="btn bg-gradient-primary btn-lg w-100 mb-0" id="submit">Add</button>
                     </div>
                   </form>
             </div>
@@ -427,10 +435,10 @@
     }
   </script>
   <!-- Github buttons -->
-  <!-- <script async defer src="https://buttons.github.io/buttons.js"></script> -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
-  <script src="../assets/js/api/location.js"></script>
+  <script src="../assets/js/api/infrastructure.js"></script>
 </body>
 
 </html>

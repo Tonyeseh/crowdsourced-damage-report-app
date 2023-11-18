@@ -65,19 +65,19 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white " href="../pages/location.html">
+          <a class="nav-link text-white active bg-gradient-primary" href="../pages/location.html">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i class="material-icons opacity-10">place</i>
+              <i class="material-icons opacity-10">receipt_long</i>
             </div>
             <span class="nav-link-text ms-1">Locations</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white " href="../pages/infrastructure.html">
+          <a class="nav-link text-white " href="../pages/virtual-reality.html">
             <div class="text-white text-center me-2 d-flex align-items-center justify-content-center">
               <i class="material-icons opacity-10">view_in_ar</i>
             </div>
-            <span class="nav-link-text ms-1">Infrastructure</span>
+            <span class="nav-link-text ms-1">Virtual Reality</span>
           </a>
         </li>
         <li class="nav-item">
@@ -139,9 +139,9 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
             <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a></li>
-            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Location</li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Damages</li>
           </ol>
-          <h6 class="font-weight-bolder mb-0">Location</h6>
+          <h6 class="font-weight-bolder mb-0">Damages</h6>
         </nav>
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
           <div class="ms-md-auto pe-md-3 d-flex align-items-center">
@@ -248,15 +248,17 @@
         </div>
       </div>
     </nav>
-
     <!-- End Navbar -->
+
+
+
     <div class="container-fluid py-4">
       <div class="row">
         <div class="col-12">
           <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
               <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">Locations table</h6>
+                <h6 class="text-white text-capitalize ps-3">Damages</h6>
               </div>
             </div>
             <div class="card-body px-0 pb-2">
@@ -264,8 +266,8 @@
                 <table class="table align-items-center mb-0" id="main-table">
                   <thead>
                     <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Infrastructure Count</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Facility</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Priority</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Health</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Last Updated</th>
                       <th class="text-secondary opacity-7"></th>
@@ -276,30 +278,6 @@
                   </tbody>
                 </table>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-12">
-          <div class="card my-4">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-              <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">Add Location</h6>
-              </div>
-            </div>
-            <div class="card-body px-0 pb-2 mx-3">
-
-                <form role="form">
-                    <div class="input-group input-group-outline mb-3">
-                      <label class="form-label">Location Name</label>
-                      <input type="text" class="form-control" id="location-name">
-                        <div class="text-center input-group-append">
-                            <button type="button" class="btn bg-gradient-primary btn-lg w-100 mb-0" id="submit-location">Add</button>
-                        </div>
-                    </div>
-                  </form>
             </div>
           </div>
         </div>
@@ -429,8 +407,8 @@
   <!-- Github buttons -->
   <!-- <script async defer src="https://buttons.github.io/buttons.js"></script> -->
   <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+  <script src="../assets/js/api/damage.js"></script>
   <script src="../assets/js/material-dashboard.min.js?v=3.1.0"></script>
-  <script src="../assets/js/api/location.js"></script>
 </body>
 
 </html>
