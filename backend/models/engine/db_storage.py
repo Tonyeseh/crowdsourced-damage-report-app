@@ -32,7 +32,7 @@ class DBStorage:
         DB_HOST = 'localhost'
         DB_NAME = getenv('DB_NAME')
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(DB_USER, DB_PWD, DB_HOST, DB_NAME))
-        if True:
+        if False:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):

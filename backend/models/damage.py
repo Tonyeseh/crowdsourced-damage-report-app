@@ -16,7 +16,7 @@ class Damage(BaseModel, Base):
     category_id = Column(String(60), ForeignKey('categories.id'), nullable=False)
     priority = Column(String(60), default="Not serious")
     working_on = relationship("WorkingOn", backref="damages", cascade="all, delete, delete-orphan")
-    # images = relationship("Image", backref="damages", cascade="all, delete, delete-orphan")
+    images = relationship("Image", backref="damages", cascade="all, delete, delete-orphan")
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
