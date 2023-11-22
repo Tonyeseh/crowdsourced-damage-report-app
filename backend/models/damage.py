@@ -1,9 +1,23 @@
 #!/usr/bin/python3
 """ damage module """
 
+import enum
 from models.base_model import BaseModel, Base
 from sqlalchemy import Enum, Column, String, ForeignKey
 from sqlalchemy.orm import relationship
+
+
+class DamageState(enum.Enum):
+    """ defines many damage states"""
+    completed = "completed"
+    assigned = "assigned"
+    not_assigned = "not_assigned"
+    awaiting_verification = "awaiting_verification"
+
+damage_state = ("completed",
+"assigned",
+"not_assigned",
+"awaiting_verification")
 
 
 class Damage(BaseModel, Base):
@@ -11,7 +25,7 @@ class Damage(BaseModel, Base):
     __tablename__ = "damages"
     reporter_id = Column(String(60), ForeignKey('student_users.id'), nullable=False)
     facility_id = Column(String(60), ForeignKey('facilities.id'), nullable=False)
-    state = Column(String(60), default="Not Assigned")  # completed|assigned|not assigned|awaiting verification
+    state = Column(Enum(*damage_state), default="not_assigned")  # completed|assigned|not assigned|awaiting verification
     description = Column(String(1024), nullable=False)
     category_id = Column(String(60), ForeignKey('categories.id'), nullable=False)
     priority = Column(String(60), default="Not serious")
