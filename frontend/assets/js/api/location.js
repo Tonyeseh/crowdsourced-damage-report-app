@@ -1,6 +1,10 @@
 locationName = document.getElementById("location-name")
 locationSubmit = document.getElementById("submit-location")
+alertBox = document.getElementById('information')
 tbody = document.getElementById("table-body")
+
+locationName.value = ""
+
 
 window.onload = (e) => {
     console.log('fetching')
@@ -92,7 +96,16 @@ locationSubmit.addEventListener('click', (e) => {
                     </td>
                     </tr>
             `
-            locationNameVal = ""
+            alertBox.innerHTML += `
+            <div class="alert alert-success alert-dismissible text-white" role="alert" id="alert">
+            <span class="text-sm">${data.name} Added Successfully</span>
+            <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            `
+
+            locationName.value = ""
         }) 
     }
 })

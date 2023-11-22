@@ -2,6 +2,7 @@ selLocation = document.getElementById('location')
 selInfras = document.getElementById('infras')
 selFacility = document.getElementById('facility')
 description = document.getElementById('description')
+otherFacility = document.getElementById('other-facility')
 images = document.getElementById('images')
 submitBtn = document.getElementById('submit')
 
@@ -37,7 +38,7 @@ selLocation.addEventListener('change', (e) => {
 // getting facilities
 selInfras.addEventListener('change', e => {
     selFacility.innerHTML = `
-        <option value"" selected>Pick an Infrastructure</option>
+        <option value="" selected>Pick an Infrastructure</option>
     `
     fetch(`http://127.0.0.1:5001/api/v1/infrastructures/${selInfras.value}/facilities`).then(res => res.json())
     .then(data => {
@@ -47,14 +48,32 @@ selInfras.addEventListener('change', e => {
             <option value="${item.id}">${item.name}</option>
             `
         });
+        selFacility.innerHTML += ` <option value="others">Others</option>`
     })
+})
+
+selFacility.addEventListener('change', (e) => {
+    if (selFacility.value == 'others') {
+        otherFacility.innerHTML = `
+        <label class="form-label">Facility Name</label>
+        <input type="text" class="form-control" id="others-name">`
+    }
+    else {
+        otherFacility.innerHTML = ""
+    }
 })
 
 // submitting the damages
 submitBtn.addEventListener('click', (e) => {
+    otherNames = document.getElementById('others-name')
+    if (otherNames || (selFacility.value !== 'others' && selFacility.value)) 
     if (selLocation.value && selInfras.value && selFacility.value && description.value.length > 5 && images.files) {
         form = new FormData()
         form.append('description', JSON.stringify(description.value))
+        form.append('infras_name', selInfras.value)
+        if (otherNames) {
+            form.append('otherNames', JSON.stringify(otherNames.value))
+        }
         for (i = 0; i < images.files.length; i++){
             form.append(`img-${i}`, images.files[i])
         }
@@ -73,3 +92,5 @@ submitBtn.addEventListener('click', (e) => {
         }
     }
 })
+
+

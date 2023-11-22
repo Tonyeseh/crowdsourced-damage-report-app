@@ -9,14 +9,20 @@ window.onload = (e) => {
     fetch('http://127.0.0.1:5001/api/v1/locations')
     .then(res => res.json())
     .then(data => {
-        data.forEach(item => {
+        data && data.forEach(item => {
             console.log(item)
             sel_location.innerHTML += `
             <option value="${item.id}">${item.name}</option>
             `
         });
+    }).catch(e => {
+        console.log(e)
     })
-    fetch('http://127.0.0.0:5001/api/v1/infrastructures').then(res => res.json())
+    fetch('http://127.0.0.0:5001/api/v1/infrastructures').then(res => {
+        if (res.ok)
+            return res.json()
+        throw new Error('not found')
+    })
     .then(data => {
         data.forEach(item => {
             console.log(data)
@@ -51,12 +57,14 @@ window.onload = (e) => {
             </tr>
         `
 })
+}).catch(e => {
+    console.log(e)
 })
 }
 
 submitBtn.addEventListener('click', (e) => {
     console.log('submitting infras')
-    if (sel_location.value && infras_name.value.length > 5 && description.value.length > 10){
+    if (sel_location.value && infras_name.value.length > 2 && description.value.length > 10){
         console.log(sel_location.value)
     fetch(`http://127.0.0.0:5001/api/v1/locations/${sel_location.value}/infrastructures`, {
         body: JSON.stringify({name: infras_name.value, description: description.value}),
