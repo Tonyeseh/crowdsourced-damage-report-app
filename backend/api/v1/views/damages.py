@@ -85,16 +85,22 @@ def post_damage(facility_id):
 
     formData = request.form.to_dict()
     files = request.files.to_dict()
-    # if not request.get_json():
-    #     abort(400, description="Not a JSON")
+
+    if not formData or not files:
+        abort(400, description="Invalid Payload")
 
     facility = storage.get(Facility, facility_id)
 
-    if not facility:
+    if not facility and not formData.get('otherNames', None):
         abort(404, description="Facility doesn't exist")
 
-    print(request.form)
-    print(request.files)
+    new_facility = formData.get('otherNames', None).strip('"')
+    if new_facility:
+        facility = Facility(name=new_facility, description="User generated Facility to be reviewed")
+        if not formData.get('infras_name', None):
+            abort(404, description="Invalid Infrastructure ID")
+        facility.infrastructure_id = formData.get('infras_name')
+        facility.save()
 
     damage_attr = ['description']
     for attr in damage_attr:
@@ -162,5 +168,18 @@ def delete_damage(damage_id):
     storage.save()
 
     return jsonify({}), 200
+
+
+# get damages reported by a particular User
+@app_views.route('/users/<user_id>/damages')
+def get_report_by_user(user_id):
+    """ gets report by User """
+    user = storage.get(StudentUser, user_id)
+
+    if not user:
+        abort(404)
+        
+    user_report = [report.to_dict() for report in user.damages]
+    return jsonify(user_report)
 
 # search for damages 
