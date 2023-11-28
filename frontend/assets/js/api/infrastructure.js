@@ -2,6 +2,7 @@ sel_location = document.getElementById('location')
 infras_name = document.getElementById('infras-name')
 description = document.getElementById('description')
 tbody = document.getElementById("table-body")
+alertBox = document.getElementById('information')
 submitBtn = document.getElementById('submit')
 
 window.onload = (e) => {
@@ -36,13 +37,13 @@ window.onload = (e) => {
                 </div>
                 </td>
                 <td>
-                <p class="text-xs font-weight-bold mb-0 align-middle">1</p>
+                <p class="text-xs font-weight-bold mb-0 align-middle">${item.location_name}</p>
                 </td>
                 <td class="align-middle text-center text-sm">
                 <span class="badge badge-sm bg-gradient-success">75%</span>
                 </td>
                 <td class="align-middle text-center">
-                <span class="text-secondary text-xs font-weight-bold">${item.created_at}</span>
+                <span class="text-secondary text-xs font-weight-bold">${typeof item.created_at}</span>
                 </td>
                 <td class="align-middle">
                 <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
@@ -85,7 +86,7 @@ submitBtn.addEventListener('click', (e) => {
             </div>
             </td>
             <td>
-            <p class="text-xs font-weight-bold mb-0 align-middle">1</p>
+            <p class="text-xs font-weight-bold mb-0 align-middle">${data.location_name}</p>
             </td>
             <td class="align-middle text-center text-sm">
             <span class="badge badge-sm bg-gradient-success">75%</span>
@@ -105,6 +106,16 @@ submitBtn.addEventListener('click', (e) => {
             </td>
         </tr>
     `
+    alertBox.innerHTML += `
+    <div class="alert alert-success alert-dismissible text-white" role="alert" id="alert">
+    <span class="text-sm">${data.name} Added Successfully</span>
+    <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+    `
+    description.value = ""
+    infras_name.value = ""
     })
 }
 })

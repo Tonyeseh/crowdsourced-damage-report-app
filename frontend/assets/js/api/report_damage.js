@@ -1,6 +1,7 @@
 selLocation = document.getElementById('location')
 selInfras = document.getElementById('infras')
 selFacility = document.getElementById('facility')
+category = document.getElementById('category')
 description = document.getElementById('description')
 otherFacility = document.getElementById('other-facility')
 images = document.getElementById('images')
@@ -14,6 +15,17 @@ fetch('http://127.0.0.1:5001/api/v1/locations')
     data.forEach(item => {
         console.log(item)
         selLocation.innerHTML += `
+        <option value="${item.id}">${item.name}</option>
+        `
+    });
+})
+
+fetch('http://127.0.0.1:5001/api/v1/categories')
+.then(res => res.json())
+.then(data => {
+    data.forEach(item => {
+        console.log(item)
+        category.innerHTML += `
         <option value="${item.id}">${item.name}</option>
         `
     });
@@ -67,16 +79,17 @@ selFacility.addEventListener('change', (e) => {
 submitBtn.addEventListener('click', (e) => {
     otherNames = document.getElementById('others-name')
     if (otherNames || (selFacility.value !== 'others' && selFacility.value)) 
-    if (selLocation.value && selInfras.value && selFacility.value && description.value.length > 5 && images.files) {
+    if (category.value && selLocation.value && selInfras.value && selFacility.value && description.value.length > 5 && images.files) {
         form = new FormData()
-        form.append('description', JSON.stringify(description.value))
+        form.append('description', description.value)
         form.append('infras_name', selInfras.value)
         if (otherNames) {
-            form.append('otherNames', JSON.stringify(otherNames.value))
+            form.append('otherNames', otherNames.value)
         }
         for (i = 0; i < images.files.length; i++){
             form.append(`img-${i}`, images.files[i])
         }
+        form.append('category_id', category.value)
         console.log(form)
         fetch(`http://127.0.0.0:5001/api/v1/facilities/${selFacility.value}/damages`, {
             body: form,
