@@ -2,10 +2,12 @@
 """ Damages Route module """
 
 from crypt import methods
+from imp import init_frozen
 from os import getcwd, mkdir, path
 from tarfile import SUPPORTED_TYPES
 from typing import Dict, List
 from flask import abort, jsonify, make_response, request
+from models.location import Location
 from models import storage
 from models.facility import Facility
 from models.image import Image
@@ -94,20 +96,30 @@ def post_damage(facility_id):
     if not facility and not formData.get('otherNames', None):
         abort(404, description="Facility doesn't exist")
 
-    new_facility = formData.get('otherNames', None).strip('"')
+    new_facility = formData.get('otherNames', None)
     if new_facility:
+        new_facility.strip('"')
         facility = Facility(name=new_facility, description="User generated Facility to be reviewed")
         if not formData.get('infras_name', None):
             abort(404, description="Invalid Infrastructure ID")
         facility.infrastructure_id = formData.get('infras_name')
         facility.save()
 
-    damage_attr = ['description']
+    damage_attr = ['description', "category_id"]
     for attr in damage_attr:
         if attr not in formData.keys():
             abort(400, description="{attr} is missing.".format(attr=attr))
 
-    category = storage.all()[list(storage.all(DamageCategory).keys())[0]]
+    print(formData)
+
+    category = storage.get(DamageCategory, formData.get('category_id', None))
+
+    if not category:
+        categories = storage.all(DamageCategory).values()
+        for cat in categories:
+            if cat.name == "Others":
+                category = cat
+                break
     student = storage.all()[list(storage.all(StudentUser).keys())[0]]
 
     instance = Damage(**formData)
@@ -181,5 +193,38 @@ def get_report_by_user(user_id):
         
     user_report = [report.to_dict() for report in user.damages]
     return jsonify(user_report)
+
+@app_views.route('/damages/info', methods=["GET"], strict_slashes=False)
+def damage_info():
+    """ gets total info of the damages """
+    damages = storage.all(Damage)
+    
+    completed_damage = [dam for dam in damages.values() if dam.state == "Completed"]
+    assigned_damage = [dam for dam in damages.values() if dam.state == "Assigned"]
+    in_review_damage = [dam for dam in damages.values() if dam.state == "Awaiting Verification"]
+
+    # location info
+    locations = [loc.to_dict() for loc in storage.all(Location).values()]
+
+    for dam in damages.values():
+        loc_id = dam.facilities.infrastructures.location.id
+        for loc in locations:
+            if loc['id'] == loc_id:
+                loc['damage_count'] = loc.get("damage_count", 0) + 1
+                if dam.state == "completed":
+                    loc['completed'] = loc.get('completed', 0) + 1
+                for work in dam.working_on:
+                    if dam.state == "completed":
+                        loc['cost'] = loc.get('cost', 0) + work.actual_cost
+                    else:
+                        loc['cost'] = loc.get('cost', 0) + work.proposed_cost
+
+
+    return jsonify({"completed": len(completed_damage),
+                    "assigned": len(assigned_damage),
+                    "in_review": len(in_review_damage),
+                    "all": len(damages),
+                    "locations": locations})
+
 
 # search for damages 

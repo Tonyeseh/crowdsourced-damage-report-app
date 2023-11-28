@@ -9,6 +9,20 @@ from models.location import Location
 from api.v1.views import app_views
 
 
+# helper functions
+def return_dict(infras: Infrastructure):
+    """ return dict with more information """
+    infras.location_name = infras.location.name
+    infras = infras.to_dict()
+
+    remove_class(infras)
+    return infras
+
+def remove_class(infras):
+    """removes location class"""
+    del infras['location']
+
+
 # get all
 @app_views.route('/infrastructures', methods=['GET'], strict_slashes=False)
 def get_infrastructures():
@@ -18,7 +32,7 @@ def get_infrastructures():
     if not all_infras:
         abort(404)
 
-    all_infras = [infras.to_dict() for infras in all_infras.values()]
+    all_infras = [return_dict(infras) for infras in all_infras.values()]
 
     return jsonify(all_infras)
 
@@ -42,7 +56,7 @@ def get_infrastructures_from_loc(location_id):
     if not location:
         abort(400, description="Location doesn't exist")
 
-    loc_infras = [loc.to_dict() for loc in location.infrastructures]
+    loc_infras = [return_dict(loc) for loc in location.infrastructures]
 
     return jsonify(loc_infras)
 
@@ -69,7 +83,7 @@ def post_infrastructure(location_id):
     instance.location_id = location.id
     instance.save()
 
-    return make_response(instance.to_dict(), 201)
+    return make_response(return_dict(instance), 201)
     
 
 # put
@@ -91,7 +105,7 @@ def put_infrastructure(infras_id):
             setattr(infras, key, value)
     storage.save()
 
-    return make_response(jsonify(infras.to_dict()), 200)
+    return make_response(jsonify(return_dict(infras)), 200)
 
 # delete
 @app_views.route('/infrastuctures/<infras_id>', methods=['DELETE'], strict_slashes=False)
