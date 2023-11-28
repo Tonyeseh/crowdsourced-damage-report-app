@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+""" auth_middleware module """
+
 from functools import wraps
 import jwt
 from flask import request, abort
