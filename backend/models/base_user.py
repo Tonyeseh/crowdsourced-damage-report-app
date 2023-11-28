@@ -24,3 +24,12 @@ class BaseUser(BaseModel):
         if __name == "password":
             __value = md5(__value.encode()).hexdigest()
         super().__setattr__(__name, __value)
+
+
+    def validate_password(self, password):
+        """validates the user password"""
+        hashed_password = md5(password)
+        if hashed_password == self.password:
+            return True
+        
+        return False
