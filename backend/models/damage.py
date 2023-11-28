@@ -14,10 +14,10 @@ class DamageState(enum.Enum):
     not_assigned = "not_assigned"
     awaiting_verification = "awaiting_verification"
 
-damage_state = ("completed",
-"assigned",
-"not_assigned",
-"awaiting_verification")
+damage_state = ("Completed",
+"Assigned",
+"Not Assigned",
+"Awaiting Verification")
 
 
 class Damage(BaseModel, Base):
@@ -25,7 +25,7 @@ class Damage(BaseModel, Base):
     __tablename__ = "damages"
     reporter_id = Column(String(60), ForeignKey('student_users.id'), nullable=False)
     facility_id = Column(String(60), ForeignKey('facilities.id'), nullable=False)
-    state = Column(Enum(*damage_state), default="not_assigned")  # completed|assigned|not assigned|awaiting verification
+    state = Column(Enum(*damage_state), default="Not Assigned")  # completed|assigned|not assigned|awaiting verification
     description = Column(String(1024), nullable=False)
     category_id = Column(String(60), ForeignKey('categories.id'), nullable=False)
     priority = Column(String(60), default="Not serious")

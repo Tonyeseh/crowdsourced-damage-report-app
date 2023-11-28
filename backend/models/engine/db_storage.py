@@ -12,13 +12,13 @@ from models.image import Image
 from models.location import Location
 from models.student_user import StudentUser
 from models.working_on import WorkingOn
+from models.worker import Worker
 from os import getenv
-import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 
-classes = {"AdminUser": AdminUser, "Damages": Damage, "DamageCategory": DamageCategory, "Facility": Facility, "Image": Image, "Infrastructure": Infrastructure, "Location": Location, "StudentUser": StudentUser, "WorkingOn": WorkingOn}
+classes = {"AdminUser": AdminUser, "Damages": Damage, "DamageCategory": DamageCategory, "Facility": Facility, "Image": Image, "Infrastructure": Infrastructure, "Location": Location, "StudentUser": StudentUser, "WorkingOn": WorkingOn, "Worker": Worker}
 
 class DBStorage:
     """DB Storage class"""
