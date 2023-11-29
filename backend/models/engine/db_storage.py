@@ -70,16 +70,16 @@ class DBStorage:
         """calls remove() method of the Session attribute"""
         self.__session.remove()
 
-    def get_by_email(self, cls, email):
-        """ get user by email """
-        if cls not in [AdminUser, StudentUser, Worker]:
-            return None
-        users = self.all(cls)
-        for user in users.values():
-            if user.email == email:
-                return user
+    # def get_by_email(self, cls, email):
+    #     """ get user by email """
+    #     if cls not in [AdminUser, StudentUser, Worker]:
+    #         return None
+    #     users = self.all(cls)
+    #     for user in users.values():
+    #         if user.email == email:
+    #             return user
             
-        return None
+    #     return None
 
         
     def get(self, cls, id):
