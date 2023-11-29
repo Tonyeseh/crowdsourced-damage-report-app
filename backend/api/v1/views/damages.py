@@ -10,6 +10,7 @@ from models.image import Image
 from models.damage import Damage
 from models.student_user import StudentUser
 from models.damage_category import DamageCategory
+from api.v1.auth_middleware import token_required
 from api.v1.views import app_views
 from werkzeug.utils import secure_filename
 
@@ -76,7 +77,8 @@ def get_damage(damage_id):
 
 # post a damage
 @app_views.route('/facilities/<facility_id>/damages', methods=['POST'], strict_slashes=False)
-def post_damage(facility_id):
+@token_required
+def post_damage(current_user, facility_id):
     """ posts a facility """
     supported_types = ['jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp', 'gif', 'apng', 'png', 'avif', 'svg', 'webp', 'mp4', 'ogg', 'WebM']
     current_path = getcwd()
@@ -142,7 +144,8 @@ def post_damage(facility_id):
 
 # put a damage
 @app_views.route('/damages/<damage_id>', methods=['PUT'], strict_slashes=False)
-def put_damage(damage_id):
+@token_required
+def put_damage(current_user, damage_id):
     """update damage"""
     if not request.get_json():
         abort(400, description="Not a JSON")
@@ -165,7 +168,8 @@ def put_damage(damage_id):
 
 # delete a damage
 @app_views.route('/damages/<damage_id>', methods=['DELETE'], strict_slashes=False)
-def delete_damage(damage_id):
+@token_required
+def delete_damage(current_user, damage_id):
     """ deletes a damage """
     damage = storage.get(Damage, damage_id)
 
@@ -180,7 +184,8 @@ def delete_damage(damage_id):
 
 # get damages reported by a particular User
 @app_views.route('/users/<user_id>/damages')
-def get_report_by_user(user_id):
+@token_required
+def get_report_by_user(current_user, user_id):
     """ gets report by User """
     user = storage.get(StudentUser, user_id)
 
@@ -191,7 +196,8 @@ def get_report_by_user(user_id):
     return jsonify(user_report)
 
 @app_views.route('/damages/info', methods=["GET"], strict_slashes=False)
-def damage_info():
+@token_required
+def damage_info(current_user):
     """ gets total info of the damages """
     damages = storage.all(Damage)
     
