@@ -34,8 +34,8 @@ def token_required(func):
                     "data": None,
                     "error": "Unathorized"
                 }, 401
-            if not current_user['active']:
-                abort(403)
+            # if not current_user['active']:
+            #     abort(403)
         except Exception as e:
             return {
                 "message": "Something went wrong",
