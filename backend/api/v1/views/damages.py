@@ -1,11 +1,7 @@
 #!/usr/bin/python3
 """ Damages Route module """
 
-from crypt import methods
-from imp import init_frozen
 from os import getcwd, mkdir, path
-from tarfile import SUPPORTED_TYPES
-from typing import Dict, List
 from flask import abort, jsonify, make_response, request
 from models.location import Location
 from models import storage
