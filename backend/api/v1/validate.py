@@ -9,7 +9,7 @@ def validate(data, regex):
 
 def validate_password(password: str):
     """Password Validator"""
-    reg = r"\b^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{8,20}$\b"
+    reg = r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$"
     return validate(password, reg)
 
 def validate_email(email: str):
@@ -19,13 +19,14 @@ def validate_email(email: str):
 
 def validate_user(**args):
     """User Validator"""
-    if  not args.get('email') or not args.get('password') or not args.get('name'):
+    if  not args.get('email') or not args.get('password') or not args.get('first_name') or not args.get('last_name'):
         return {
             'email': 'Email is required',
             'password': 'Password is required',
-            'name': 'Name is required'
+            'first_name': 'First Name is required',
+            'last_name': 'Last Name is required'
         }
-    if not isinstance(args.get('name'), str) or \
+    if not isinstance(args.get('first_name'), str) or not isinstance(args.get('last_name'), str) or \
         not isinstance(args.get('email'), str) or not isinstance(args.get('password'), str):
         return {
             'email': 'Email must be a string',
@@ -41,9 +42,13 @@ def validate_user(**args):
             'password': 'Password is invalid, Should be atleast 8 characters with \
                 upper and lower case letters, numbers and special characters'
         }
-    if not 2 <= len(args['name'].split(' ')) <= 30:
+    if not 2 <= len(args['first_name']) <= 30:
         return {
-            'name': 'Name must be between 2 and 30 words'
+            'first_name': 'Name must be between 2 and 30 words'
+        }
+    if not 2 <= len(args['last_name']) <= 30:
+        return {
+            'last_name': 'Name must be between 2 and 30 words'
         }
     return True
 
