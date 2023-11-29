@@ -9,9 +9,15 @@ locationName.value = ""
 window.onload = (e) => {
     console.log('fetching')
     tbody.innerHTML = ""
-    fetch('http://127.0.0.1:5001/api/v1/locations')
+    fetch('http://127.0.0.1:5001/api/v1/locations', {
+      headers: {
+        method: "GET",
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
     .then(res => res.json())
     .then(data => {
+      console.log(data)
         data.forEach(item => {
             tbody.innerHTML += `
             <tr>
@@ -51,6 +57,8 @@ function delete_location(event) {
     console.log(event)
 }
 
+console.log(localStorage.getItem('token'))
+
 locationSubmit.addEventListener('click', (e) => {
     e.preventDefault()
 
@@ -63,6 +71,7 @@ locationSubmit.addEventListener('click', (e) => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem('token')}`
               }
         }).then(res => res.json()).then(data => {
             console.log(data)
