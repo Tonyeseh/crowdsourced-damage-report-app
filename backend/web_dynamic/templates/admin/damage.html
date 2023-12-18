@@ -1,0 +1,85 @@
+{% extends "admin/base.html" %}
+{% block title %}Facilities{% endblock title %}
+  {% block body %}
+    {% include "admin/partials/_side_bar.html" %}
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <!-- Navbar -->
+    {% include "admin/partials/_nav.html" %}
+    <!-- End Navbar -->
+
+
+
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+              <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                <h6 class="text-white text-capitalize ps-3">Damages</h6>
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0" id="main-table">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Facility</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Priority</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">State</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Last Updated</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Assign</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Update</th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="table-body">
+                    {% for damage in all_damages %}
+                    <tr>
+                      <td>
+                      <div class="d-flex px-2 py-1">
+                          <div class="d-flex flex-column justify-content-center">
+                          <h6 class="mb-0 text-sm align-middle">{{damage.facility_name}} in {{damage.infrastructure_name}}</h6>
+                          </div>
+                      </div>
+                      </td>
+                      <td>
+                      <p class="text-xs font-weight-bold mb-0 align-middle">{{damage.priority}}</p>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                      <span class="badge badge-sm bg-gradient-success">{{damage.state}}</span>
+                      </td>
+                      <td class="align-middle text-center">
+                      <span class="text-secondary text-xs font-weight-bold">{{damage.created_at}}</span>
+                      </td>
+                      <td class="align-middle">
+                        <select name="worker" class="form-select mb-3" aria-label=" example">
+                          <option value="" selected>Pick a worker</option>
+                          {% for worker in damage.workers %}
+                            <option value="{{worker.id}}">{{worker.first_name}} {{worker.last_name}}</option>
+                          {% endfor %}
+                      </select>
+                      </td>
+                      <td class="align-middle">
+                      <a type="submit" class="text-secondary font-weight-bold text-xs text-info text-center" id={{damage.id}} data-toggle="tooltip" data-original-title="Update Record" onclick="updateRecord(this)">
+                          Update
+                      </a>
+                      </td>
+                      <td class="align-middle">
+                      <a href="javascript:;" class="text-secondary font-weight-bold text-xs text-danger" id={{damage.id}} data-toggle="tooltip" data-original-title="Delete Location" onclick="deleteRecord(this)">
+                          Delete
+                      </a>
+                      </td>
+                  </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% include "admin/partials/_footer.html" %}
+    </div>
+  </main>
+  <script src="{{ url_for('admin_views.static', filename='js/damage.js')}}"></script>
+  {% endblock body %}

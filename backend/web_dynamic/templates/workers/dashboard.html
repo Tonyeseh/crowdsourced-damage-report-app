@@ -1,0 +1,172 @@
+  {% extends 'workers/base.html' %}
+  {% block title %}Dashboard{% endblock title %}
+  {% block body %}
+
+  {% include 'workers/partials/_side_bar.html' %}
+
+  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+
+    {% include 'workers/partials/_nav.html' %}
+    
+    <!-- End Navbar -->
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">work_history</i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0 text-capitalize">
+                  All Jobs
+                </p>
+                <h4 class="mb-0" id="total-report">{{all_jobs.get('all', 0)}}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-3">
+              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+0% </span>than last week</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">person</i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0 text-capitalize">Not Done</p>
+                <h4 class="mb-0" id="completed-report">{{all_jobs.get('not_done', 0)}}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-3">
+              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+0% </span>than last month</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">person</i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0 text-capitalize">To be verified
+                </p>
+                <h4 class="mb-0" id="review-report">{{all_jobs.get('not_verified', 0)}}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-3">
+              <p class="mb-0"><span class="text-danger text-sm font-weight-bolder">-2%</span> than yesterday</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">check_circle</i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0 text-capitalize">Verified</p>
+                <h4 class="mb-0" id="assigned-report">{{all_jobs.get('verified', 0)}}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+            <div class="card-footer p-3">
+              <p class="mb-0"><span class="text-success text-sm font-weight-bolder">+5% </span>than yesterday</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-4 mt-5">
+        <div class="col-lg-12 col-md-6 mb-md-0 mb-4">
+          <div class="card">
+            <div class="card-header pb-0">
+              <div class="row">
+                <div class="col-lg-6 col-7">
+                  <h6>Outstanding Jobs</h6>
+                  <p class="text-sm mb-0">
+                    <i class="fa fa-check text-info" aria-hidden="true"></i>
+                    <span class="font-weight-bold ms-1">{{all_jobs.get('verified', 0)}} done</span> this month
+                  </p>
+                </div>
+                <div class="col-lg-6 col-5 my-auto text-end">
+                  <div class="dropdown float-lg-end pe-4">
+                    <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="fa fa-ellipsis-v text-secondary"></i>
+                    </a>
+                    <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
+                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
+                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
+                      <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Locations</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Infrastructure</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Facility</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Budget (&#8358;)</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mark as Completed</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Update</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody">
+                    {% for work in user_jobs %}
+                    <tr>
+                      <td>
+                        <div class="d-flex px-2 py-1">
+                          
+                          <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0 text-sm">{{work.damages.facilities.infrastructures.location.name}}</h6>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                      <span class="text-xs font-weight-bold"> {{work.damages.facilities.infrastructures.name}} </span>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                      <span class="text-xs font-weight-bold"> {{work.damages.facilities.name}} </span>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                        <span class="text-xs font-weight-bold"> {{work.proposed_cost}} </span>
+                      </td>
+                      <td class="align-middle text-center text-sm">
+                      <span class="text-xs font-weight-bold"> <input type="checkbox" value=""> </span>
+                      </td>
+                      <td class="align-middle">
+                      <a id={{work.id}} class="text-secondary font-weight-bold text-xs text-info text-center" data-toggle="tooltip" data-original-title="Update Record" onclick="updateRecord(this)">
+                          Update
+                      </a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+        
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- footer -->
+      {% include 'workers/partials/_footer.html' %}
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/plugins/chartjs.min.js')}}"></script>
+  <script src="{{ url_for('worker_views.static', filename='js/dashboard.js')}}"></script>
+ 
+
+  {% endblock body %}

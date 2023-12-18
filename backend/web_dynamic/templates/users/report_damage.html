@@ -1,0 +1,79 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Report Damage{% endblock title %}
+
+{% block body %}
+
+{% include 'users/partials/_nav.html' %}
+
+        <!-- Form -->
+        <section class="p-5">
+            <div class="container">
+            <div class="row justify-content-center">
+            <div class="col-md-6 text-center mb-3">
+            <h2 class="heading-section">Report a Damage</h2>
+            </div>
+            </div>
+            <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+            <div class="login-wrap p-4 p-md-5">
+            <div class="icon d-flex align-items-center justify-content-center mb-5">
+            <span class="fa bi-patch-minus"></span>
+            </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                  {% for category, message in messages %}
+                    <div class="alert alert-sm alert-{{ category }} m-3">{{message}}</div>
+                  {% endfor %}{% endif %}{% endwith %}
+            <form role="form" class="login-form" action="/report" method='post' enctype="multipart/form-data">
+                <label class="form-label-lg">What type of damage is it?</label>
+                <select id="category" name="category" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" required>
+                <option value="" selected>Pick the damage type</option>
+                {% for cat in categories %}
+                <option value="{{cat.id}}" >{{cat.name}}</option>
+                {% endfor %}
+            </select>
+            <label class="form-label-lg">How urgent should the repair be?</label>
+                <select id="priority" name="priority" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" required>
+                  {% for priority in priorities %}
+                    <option value="{{priority}}" >{{priority}}</option>
+                  {% endfor %}
+            </select>
+                <label class="form-label-lg">Where did it happen?</label>
+                <select id="location" name="location" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" required>
+                    <option value="" selected>Pick the location</option>
+                    {% for loc in locations %}
+                      <option value="{{loc.id}}">{{loc.name}}</option>
+                    {% endfor %}
+                  </select>
+                <label class="form-label">What building, office or room?</label>
+                <select id="infras" name="infras" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" required>
+                    <option value="" selected>Open this select menu</option>
+                </select>
+                <label class="form-label">What got spoilt?</label>
+                <select id="facility" name="facility" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" required>
+                    <option value="" selected>Open this select menu</option>
+                  </select>
+                  <div class="input-group input-group-outline mb-3" id="other-facility">
+                  </div>
+                <label for="label-description" class="form-label">Please give brief relevant information about the state of the damage</label>
+                <div id="label-description " class="input-group input-group-outline mb-3">
+                  <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                </div>
+                <div>
+                  <label class="form-label">Upload a picture(s) of the damage</label>
+                  <div class="input-group">
+                    <input id="images" type="file" class="form-control" name="images" multiple accept="image/*,video/*" class="form-control" required>
+                  </div>
+                </div>
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary rounded submit p-3 mt-4 px-5">Submit</button>
+                </div>
+              </form>
+            </div>
+            </div>
+            </div>
+            </div>
+            </section>
+            <script src="{{ url_for('user_views.static', filename='js/report_damage.js') }}"></script>
+{% endblock body %}
