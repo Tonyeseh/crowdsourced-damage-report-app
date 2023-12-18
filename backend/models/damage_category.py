@@ -10,6 +10,7 @@ class DamageCategory(BaseModel, Base):
     """Representation of DamageCategory"""
     __tablename__ = 'categories'
     name = Column(String(128), nullable=False, unique=True)
+    workers = relationship('Worker', backref="categories")
 
     def __init__(self, *args, **kwargs) -> None:
         """Initialises DamageCategory"""
