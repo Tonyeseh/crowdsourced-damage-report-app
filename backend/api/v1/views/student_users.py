@@ -1,37 +1,115 @@
 #!/usr/bin/python3
 """ student_users route module """
 
-from flask import abort, jsonify, request
+import jwt
+
+from flask import current_app, abort, jsonify, request
 from api.v1.views import app_views
+from api.v1.auth_middleware import user_token_required
+from api.v1.validate import validate_user, validate_email_and_password
 from models import storage
 from models.student_user import StudentUser
 
 # get all student_users
-@app_views.route('/users/<user_id>', methods=["GET"], strict_slashes=False)
-def get_student_user(user_id):
+@app_views.route('/users/', methods=["GET"], strict_slashes=False)
+@user_token_required
+def get_student_user(current_user):
     """ get a student """
-    user = storage.get(StudentUser, user_id)
+    # user = storage.get(StudentUser, user_id)
 
-    if not user:
-        abort(404)
+    # if not user:
+    #     abort(404)
 
-    return jsonify(user.to_dict())
+    return jsonify(current_user.to_dict())
 
 # post student_users
-@app_views.route('/users', methods=["POST"], strict_slashes=False)
-def post_student_user():
-    """ post a student """
-    data = dict(request.form)
+@app_views.route('/users', methods=["POST"])
+def post_user():
+    """ signup as a user """
+    try:
+        user = dict(request.form)
 
-    student_attr = ["first_name", "last_name", "email", "password"]
-    for attr in student_attr:
-        if attr not in data.keys():
-            abort(400, description=f'{attr} is missing')
+        if not user:
+            return {
+                "message": "Please provide user details",
+                "data": None,
+                "error": "Bad request"
+            }, 400
+        is_validated = validate_user(**user)
+        if is_validated is not True:
+            return dict(message="Invalid data", data=None, error=is_validated)
+        email_exists = StudentUser.get_by_email(user['email'])
 
-    instance = StudentUser(**data)
-    instance.save()
+        if email_exists:
+            return {
+                "message": "User email already exist",
+                "data": None,
+                "error": "Invalid email address"
+            }
+        user = StudentUser(**user)
+        user.save()
+        
+        return jsonify({
+            "message": "Successfully created new user",
+            "data": user.to_dict(),
+        }), 201
 
-    return jsonify(instance.to_dict()), 201
+    except Exception as e:
+        return {
+            "message": "Something went wrong",
+            "error": str(e),
+            "data": None
+        }, 500
+
+# login user
+@app_views.route('/users/login', methods=['POST'])
+def login_user():
+    """login user to the platform"""
+    try:
+        data = dict(request.form)
+        if not data:
+            return {
+                "message": "Please provide user details",
+                "data": None,
+                "error": "Bad request"
+            }, 400
+        
+        # validate input
+        is_validated = validate_email_and_password(data.get('email'), data.get('password'))
+        if not is_validated:
+            return dict(message="Invalid data", data=None, error="is_validated"), 400
+        user = StudentUser.login(data['email'], data['password'])
+        print(user)
+        if user:
+            try:
+                user.token = jwt.encode(
+                    {"user_id": user.id},
+                    current_app.config["SECRET_KEY"],
+                    algorithm="HS256"
+                )
+                return {
+                    "message": "Successfully fetched auth token",
+                    "data": user.to_dict()
+                }
+            except Exception as e:
+                return {
+                    "message": "Something went wrong!",
+                    "error": str(e),
+                    "data": None
+                }, 500
+        return {
+            "message": "Error fetching auth token!, invalid email or password",
+            "data": None,
+            "error": "Unauthorized"
+        }, 404
+    except Exception as e:
+        return {
+                "message": "Something went wrong1!",
+                "error": str(e),
+                "data": None
+        }, 500
+
+
 
 # put student_users
 @app_views.route('/users/<user_id>', methods=["GET"], strict_slashes=False)

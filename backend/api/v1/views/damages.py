@@ -10,9 +10,12 @@ from models.image import Image
 from models.damage import Damage
 from models.student_user import StudentUser
 from models.damage_category import DamageCategory
-from api.v1.auth_middleware import token_required
+from api.v1.auth_middleware import token_required, user_token_required
 from api.v1.views import app_views
 from werkzeug.utils import secure_filename
+
+from models.worker import Worker
+from models.working_on import WorkingOn
 
 # helper functions
 def add_damage_info(damage: Damage):
@@ -20,7 +23,14 @@ def add_damage_info(damage: Damage):
 
     damage.facility_name =  damage.facilities.name
     damage.infrastructure_name = damage.facilities.infrastructures.name
+    damage.location_name = damage.facilities.infrastructures.location.name
     damage.img_url = [f'/images/{damage.id}/{img.name}' for img in damage.images]
+    reporter =  storage.get(StudentUser, damage.reporter_id)
+    damage.reporter = reporter.first_name
+    
+    workers = storage.all(Worker).values()
+    
+    damage.workers = [worker.to_dict() for worker in workers if worker.job_type == damage.category_id]
 
     damage = damage.to_dict()
 
@@ -77,7 +87,7 @@ def get_damage(damage_id):
 
 # post a damage
 @app_views.route('/facilities/<facility_id>/damages', methods=['POST'], strict_slashes=False)
-@token_required
+@user_token_required
 def post_damage(current_user, facility_id):
     """ posts a facility """
     supported_types = ['jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp', 'gif', 'apng', 'png', 'avif', 'svg', 'webp', 'mp4', 'ogg', 'WebM']
@@ -118,11 +128,11 @@ def post_damage(current_user, facility_id):
             if cat.name == "Others":
                 category = cat
                 break
-    student = storage.all()[list(storage.all(StudentUser).keys())[0]]
+
 
     instance = Damage(**formData)
     instance.facility_id = facility.id
-    instance.reporter_id = student.id
+    instance.reporter_id = current_user.id
     instance.category_id = category.id
     instance.save()
 
@@ -183,16 +193,13 @@ def delete_damage(current_user, damage_id):
 
 
 # get damages reported by a particular User
-@app_views.route('/users/<user_id>/damages')
-@token_required
-def get_report_by_user(current_user, user_id):
+@app_views.route('/users/damages')
+@user_token_required
+def get_report_by_user(current_user):
     """ gets report by User """
-    user = storage.get(StudentUser, user_id)
 
-    if not user:
-        abort(404)
-        
-    user_report = [report.to_dict() for report in user.damages]
+    user_report = [add_damage_info(report) for report in current_user.reports]
+    print(user_report)
     return jsonify(user_report)
 
 @app_views.route('/damages/info', methods=["GET"], strict_slashes=False)
@@ -228,5 +235,49 @@ def damage_info(current_user):
                     "all": len(damages),
                     "locations": locations})
 
-
 # search for damages 
+
+
+@app_views.route('/damages/working_on', methods=['POST'])
+@token_required
+def post_working_on(current_user):
+    """ creates a new working_on entry"""
+    all_works = storage.all(WorkingOn)
+    work = None
+    try:
+        data = request.form
+        if ['damage_id', 'worker_id'] != list(data.keys()):
+            return {
+                "error": "Incomplete data"
+            }
+            
+        damage = storage.get(Damage, data['damage_id'])
+        worker = storage.get(Worker, data['worker_id'])
+        if not damage or not worker:
+            return {
+                "error": "Invalid damage or worker id"
+            }
+        
+        for works in all_works.values():
+            if works.damage_id == damage.id and works.status == "In Progress":
+                work = works
+                
+        if work:
+            work.worker_id = worker.id
+            damage.state = "Assigned"
+            damage.save()
+            
+        else:
+            work = WorkingOn()
+            work.damage_id = damage.id
+            work.worker_id = worker.id
+            damage.state = "Assigned"
+            damage.save()
+
+        work.save()
+        return {
+            "status": True
+        }
+        
+    except Exception as e:
+        return {"error": str(e)}

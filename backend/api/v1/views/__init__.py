@@ -15,3 +15,4 @@ from api.v1.views.student_users import *
 from api.v1.views.auth import *
 from api.v1.views.categories import *
 from api.v1.views.admin_user import *
+from api.v1.views.worker import *
