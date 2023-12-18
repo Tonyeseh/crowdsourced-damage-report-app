@@ -18,11 +18,11 @@ app.register_blueprint(admin_views)
 app.register_blueprint(worker_views)
 app.register_blueprint(user_views)
 
+
 @app.teardown_appcontext
 def close_db(error):
     """ close storage """
     storage.close()
-
 
 
 if __name__ == "__main__":
