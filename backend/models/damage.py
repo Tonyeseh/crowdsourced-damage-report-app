@@ -17,7 +17,11 @@ class DamageState(enum.Enum):
 damage_state = ("Completed",
 "Assigned",
 "Not Assigned",
-"Awaiting Verification")
+"Awaiting Verification",
+"Failed",
+"Reassigned")
+
+priority_lst = ("Not serious", "Serious", "Very serious")
 
 
 class Damage(BaseModel, Base):
@@ -25,10 +29,10 @@ class Damage(BaseModel, Base):
     __tablename__ = "damages"
     reporter_id = Column(String(60), ForeignKey('student_users.id'), nullable=False)
     facility_id = Column(String(60), ForeignKey('facilities.id'), nullable=False)
-    state = Column(Enum(*damage_state), default="Not Assigned")  # completed|assigned|not assigned|awaiting verification
+    state = Column(Enum(*damage_state), default="Not Assigned")  # completed|assigned|not assigned|awaiting verification| failed
     description = Column(String(1024), nullable=False)
     category_id = Column(String(60), ForeignKey('categories.id'), nullable=False)
-    priority = Column(String(60), default="Not serious")
+    priority = Column(Enum(*priority_lst), default="Not serious")
     working_on = relationship("WorkingOn", backref="damages", cascade="all, delete, delete-orphan")
     images = relationship("Image", backref="damages", cascade="all, delete, delete-orphan")
 
