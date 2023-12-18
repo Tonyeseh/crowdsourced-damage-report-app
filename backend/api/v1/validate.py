@@ -9,7 +9,7 @@ def validate(data, regex):
 
 def validate_password(password: str):
     """Password Validator"""
-    reg = r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,20}$"
+    reg = r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-.]).{8,20}$"
     return validate(password, reg)
 
 def validate_email(email: str):
