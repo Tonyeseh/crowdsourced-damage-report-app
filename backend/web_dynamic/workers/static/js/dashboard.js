@@ -17,13 +17,20 @@ function getCookie(name) {
     // Return null if not found
     return null;
   }
-//   
-function updateRecord(elem) {
-    statusCheckBox = elem.parentNode.previousSibling.previousSibling.childNodes[1].childNodes[1]
+
+function confirmStatus(elem) {
+    workId = elem.dataset.workId
+    submitStatus = document.getElementById('workStatus')
+    submitStatus.setAttribute('data-work-id', workId)
+}
+
+
+function updateStatus(elem) {
+    workId = elem.dataset.workId
     
     form = new FormData()
-    form.append('job_id', elem.id)
-    form.append('status', statusCheckBox.checked)
+    form.append('job_id', workId)
+    form.append('status', true)
     fetch('http://127.0.0.1:5001/api/v1/worker/damages/working_on', {
         body: form,
         method: 'POST',
@@ -32,5 +39,7 @@ function updateRecord(elem) {
         }
     }).then(res => res.json())
     .then(data => console.log(data))
+
+    document.getElementById('exampleModal').style.display = 'none'
 
 }
