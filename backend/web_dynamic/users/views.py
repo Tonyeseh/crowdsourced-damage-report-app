@@ -304,7 +304,8 @@ def user_reports(current_user):
     damages = storage.all(Damage).values()
     damages = [
         damage for damage in damages if damage.reporter_id == current_user.id]
+    verify_damage = [damage for damage in damages if damage.state == 'Awaiting Verification']
     return render_template(
         '/users/my-reports.html',
         all_damages=damages,
-        user=current_user)
+        user=current_user, verify_damage=verify_damage)
