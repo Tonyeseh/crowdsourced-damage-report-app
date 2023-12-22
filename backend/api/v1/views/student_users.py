@@ -8,9 +8,12 @@ from api.v1.views import app_views
 from api.v1.auth_middleware import user_token_required
 from api.v1.validate import validate_user, validate_email_and_password
 from models import storage
+from models.damage import Damage
 from models.student_user import StudentUser
 
 # get all student_users
+
+
 @app_views.route('/users/', methods=["GET"], strict_slashes=False)
 @user_token_required
 def get_student_user(current_user):
@@ -23,6 +26,8 @@ def get_student_user(current_user):
     return jsonify(current_user.to_dict())
 
 # post student_users
+
+
 @app_views.route('/users', methods=["POST"])
 def post_user():
     """ signup as a user """
@@ -129,3 +134,73 @@ def put_student_user(user_id):
             setattr(user, key, value)
 
     return jsonify(user.to_dict())
+
+
+@app_views.route('/users/verify', methods=['POST'], strict_slashes=False)
+@user_token_required
+def verify_damage(current_user):
+    """ verify a damage """
+    try:
+        data = dict(request.form)
+        print(data)
+
+        if not data:
+            return {
+                "message": "Please provide user details",
+                "data": None,
+                "error": "Bad request"
+            }, 400
+
+        if 'damage_id' not in data.keys() and 'verify' not in data.key():
+            return {
+                "message": "Invalid payload",
+                "data": None,
+                "error": "Bad request",
+            }, 400
+            
+        damage = storage.get(Damage, data.get('damage_id'))
+        if not damage:
+            return {
+                "message": "Invalid damage instance",
+                "data": None,
+                "error": "Bad request"
+            }, 400
+            
+        job = None
+        for j in damage.working_on:
+            if job is None:
+                job = j
+                continue
+            if j.created_at > job.created_at:
+                job = j
+        
+        if not job:
+            return {
+                "message": "Damage is not yet being worked on",
+                "data": None,
+                "error": "Bad request"
+            }, 400
+            
+        if data.get('verify') == 'Yes':
+            job.status = "Done"
+            damage.state = "Completed"
+            job.save()
+            damage.save()
+            
+        else:
+            job.status = "Failed"
+            damage.state = "Failed"
+            job.save()
+            damage.save()
+            
+
+        return {
+            "data": "Updated"
+        }
+
+    except Exception as e:
+        return {
+            "message": "Something went wrong1!",
+            "error": str(e),
+            "data": None
+        }, 500
