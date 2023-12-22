@@ -34,7 +34,7 @@
           <div class="card">
             <div class="card-header p-3 pt-2">
               <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
-                <i class="material-icons opacity-10">person</i>
+                <i class="material-icons opacity-10">remove_done</i>
               </div>
               <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">Not Done</p>
@@ -50,8 +50,8 @@
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
           <div class="card">
             <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
-                <i class="material-icons opacity-10">person</i>
+              <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">unpublished</i>
               </div>
               <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">To be verified
@@ -68,8 +68,8 @@
         <div class="col-xl-3 col-sm-6">
           <div class="card">
             <div class="card-header p-3 pt-2">
-              <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
-                <i class="material-icons opacity-10">check_circle</i>
+              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">verified</i>
               </div>
               <div class="text-end pt-1">
                 <p class="text-sm mb-0 text-capitalize">Verified</p>
@@ -145,15 +145,21 @@
                       <td class="align-middle text-center text-sm">
                       <span class="text-xs font-weight-bold"> <input type="checkbox"> </span>
                       </td>
-                      <td class="align-middle">
-                      <a href='javascript:;' id={{work.id}} class="text-secondary font-weight-bold text-xs text-info text-center" data-toggle="tooltip" data-original-title="Update Record" onclick="updateRecord(this)">
-                          Update
-                      </a>
+                      <td class="align-middle text-center text-sm">
+                        <a href="/damages/{{work.damages.id}}" target="_blank" class="text-secondary font-weight-bold text-xs text-info text-center mx-2">
+                          <i class="material-icons">
+                            visibility
+                          </i>
+                        </a>
+                        <a href="javascript:;" class="font-weight-bold text-xs text-info text-center mx-2" data-work-id="{{work.id}}" onclick="confirmStatus(this)"  data-bs-toggle="modal" data-bs-target="#exampleModal">
+                          <i class="material-icons">
+                            done_outline
+                          </i>
+                        </a>
                       </td>
                     </tr>
                     {% endfor %}
-                  </tbody>
-        
+                  </tbody>  
                 </table>
               </div>
             </div>
@@ -163,10 +169,32 @@
       <!-- footer -->
       {% include 'workers/partials/_footer.html' %}
     </div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Confirm Work Status</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you done?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="workStatus" onclick="updateStatus(this)">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
   </main>
 
   <script src="{{ url_for('static', filename='js/plugins/chartjs.min.js')}}"></script>
   <script src="{{ url_for('worker_views.static', filename='js/dashboard.js')}}"></script>
+
+  
  
 
   {% endblock body %}
