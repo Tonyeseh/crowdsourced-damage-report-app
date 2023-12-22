@@ -53,7 +53,7 @@ def post_user():
             }
         user = StudentUser(**user)
         user.save()
-        
+
         return jsonify({
             "message": "Successfully created new user",
             "data": user.to_dict(),
@@ -67,6 +67,8 @@ def post_user():
         }, 500
 
 # login user
+
+
 @app_views.route('/users/login', methods=['POST'])
 def login_user():
     """login user to the platform"""
@@ -78,11 +80,13 @@ def login_user():
                 "data": None,
                 "error": "Bad request"
             }, 400
-        
+
         # validate input
-        is_validated = validate_email_and_password(data.get('email'), data.get('password'))
+        is_validated = validate_email_and_password(
+            data.get('email'), data.get('password'))
         if not is_validated:
-            return dict(message="Invalid data", data=None, error="is_validated"), 400
+            return dict(message="Invalid data", data=None,
+                        error="is_validated"), 400
         user = StudentUser.login(data['email'], data['password'])
         print(user)
         if user:
@@ -109,11 +113,10 @@ def login_user():
         }, 404
     except Exception as e:
         return {
-                "message": "Something went wrong1!",
-                "error": str(e),
-                "data": None
+            "message": "Something went wrong1!",
+            "error": str(e),
+            "data": None
         }, 500
-
 
 
 # put student_users
@@ -125,7 +128,6 @@ def put_student_user(user_id):
     if not user:
         abort(404)
 
-    
     ignore = ['id', 'updated_at', 'created_at']
     data = request.get_json()
 
