@@ -21,6 +21,8 @@ from models.damage_category import DamageCategory
 from models.facility import Facility
 from models.infrastructure import Infrastructure
 from models.location import Location
+from models.student_user import StudentUser
+from models.worker import Worker
 
 
 admin_views = Blueprint(
@@ -35,6 +37,9 @@ admin_views = Blueprint(
 def admin_home(current_user):
     """admin's home page """
     damages = storage.all(Damage)
+    users_count = storage.count(StudentUser)
+    workers_count = storage.count(Worker)
+    admin_count = storage.count(AdminUser)
 
     completed_damage = [
         dam for dam in damages.values() if dam.state == "Completed"]
@@ -42,6 +47,7 @@ def admin_home(current_user):
         dam for dam in damages.values() if dam.state == "Assigned"]
     in_review_damage = [dam for dam in damages.values(
     ) if dam.state == "Awaiting Verification"]
+    failed_repair = [dam for dam in damages.values() if dam.state == 'Failed']
 
     # location info
     locations = [loc.to_dict() for loc in storage.all(Location).values()]
@@ -67,8 +73,12 @@ def admin_home(current_user):
             "completed": len(completed_damage),
             "assigned": len(assigned_damage),
             "in_review": len(in_review_damage),
+            "failed": len(failed_repair),
             "all": len(damages),
-            "locations": locations})
+            "locations": locations},
+        users={"user":users_count,
+               "workers": workers_count,
+               "admin": admin_count})
 
 
 @admin_views.route('/login', methods=['GET', 'POST'])
