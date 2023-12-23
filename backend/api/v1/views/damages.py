@@ -227,6 +227,25 @@ def delete_damage(current_user, damage_id):
 
     return jsonify({}), 200
 
+#get workers for a damage
+@app_views.route('/damages/<damage_id>/workers', methods=['GET'])
+@token_required
+def damage_worker(current_user, damage_id):
+    """gets the workers that can work on a damage"""
+    damage = storage.get(Damage, damage_id)
+    
+    if not damage:
+        abort(404)
+    
+    category = storage.get(DamageCategory, damage.category_id)
+    
+    if not category:
+        abort(404)
+        
+    workers = [cat.to_dict() for cat in category.workers]
+    
+    return jsonify(workers), 200
+
 
 # get damages reported by a particular User
 @app_views.route('/users/damages')
