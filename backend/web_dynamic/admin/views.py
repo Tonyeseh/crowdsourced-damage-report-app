@@ -230,17 +230,11 @@ def get_facilities(current_user):
 @token_required
 def get_damages(current_user):
     """ gets all damages """
-    all_damages = storage.all(Damage)
-
-    all_damages_lst = []
-
-    for dam in all_damages.values():
-        all_damages_lst.append(add_damage_info(dam))
-        print(dam.workers)
+    all_damages = storage.all(Damage).values()
 
     return render_template(
         'admin/damage.html',
-        all_damages=all_damages_lst,
+        all_damages=all_damages,
         user=current_user,
         page='damage',
     )
