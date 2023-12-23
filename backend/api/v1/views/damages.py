@@ -34,12 +34,15 @@ def add_damage_info(damage: Damage):
 
     damage = damage.to_dict()
 
-    remove_irrelevant_info(damage)
-    return damage
+    return remove_irrelevant_info(damage)
 
 def remove_irrelevant_info(damage):
-    del damage['facilities']
-    del damage['images']
+    try:
+        del damage['facilities']
+        del damage['images']
+        
+    except Exception as e:
+        pass
 
 # get all damages
 @app_views.route('/damages', methods=['GET'], strict_slashes=False)
