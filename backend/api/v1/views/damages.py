@@ -160,24 +160,57 @@ def post_damage(current_user, facility_id):
 @token_required
 def put_damage(current_user, damage_id):
     """update damage"""
-    if not request.get_json():
-        abort(400, description="Not a JSON")
+    try:
+        print('i am here')
+        damage = storage.get(Damage, damage_id)
 
-    damage = storage.get(Damage, damage_id)
+        if not damage:
+            abort(404)
 
-    if not damage:
-        abort(404)
+        ignore = ['id', 'updated_at', 'created_at', 'worker_id']
+    
+        data = dict(request.form)
+        print(data)
+
+        for key, value in data.items():
+            if key not in ignore:
+                setattr(damage, key, value)
+                
+        if data.get('worker_id', None):
+            worker = storage.get(Worker, data.get('worker_id'))
+            if not worker:
+                abort(404)
+
+            if damage.working_on and sorted(damage.working_on, key=lambda x: x.created_at, reverse=True)[0].status != 'Failed':
+                return {
+                    "Error": "Already Assigned"
+                }
+                    
+            
+            repair = WorkingOn()
+            repair.damage_id = damage.id
+            repair.worker_id = worker.id
+            damage.state = "Assigned"
+            damage.save()
+            repair.save()
+            
+            # print(repair.to_dict())
+            
+        return_data = {
+            "worker_name": " ".join([repair.workers.first_name, repair.workers.last_name]),
+            "damage_state": damage.state,
+        }
+                
+        return jsonify({"data":return_data})
+        
+    except Exception as e:
+        return {
+            "error": str(e),
+            "data": None
+        }
 
 
-    ignore = ['id', 'updated_at', 'created_at']
-    data = request.get_json()
-
-    for key, value in data.items():
-        if key not in ignore:
-            setattr(damage, key, value)
-
-
-    return make_response(jsonify(add_damage_info(damage)), 200)
+    # return make_response(jsonify(add_damage_info(damage)), 200)
 
 # delete a damage
 @app_views.route('/damages/<damage_id>', methods=['DELETE'], strict_slashes=False)
