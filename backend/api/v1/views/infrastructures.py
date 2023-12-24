@@ -7,6 +7,7 @@ from models.infrastructure import Infrastructure
 from models.location import Location
 
 from api.v1.views import app_views
+from api.v1.auth_middleware import token_required
 
 
 # helper functions
@@ -62,7 +63,8 @@ def get_infrastructures_from_loc(location_id):
 
 # post
 @app_views.route('locations/<location_id>/infrastructures', methods=['POST'], strict_slashes=False)
-def post_infrastructure(location_id):
+@token_required
+def post_infrastructure(current_user, location_id):
     """ add an Infrastructure """
     if not request.get_json():
         abort(400, description="Not a JSON")
