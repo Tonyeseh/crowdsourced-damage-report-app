@@ -2,13 +2,15 @@
 """ Categories Route module """
 
 from flask import abort, jsonify, request
+from api.v1.auth_middleware import token_required
 from api.v1.views import app_views
 from models import storage
 from models.damage import Damage
 from models.damage_category import DamageCategory
 
 @app_views.route('/categories', methods=['GET'], strict_slashes=False)
-def get_categories():
+@token_required
+def get_categories(current_user):
     """gets all categories"""
     damages = storage.all(Damage).values()
     all_cat = [cat.to_dict() for cat in storage.all(DamageCategory).values()]
@@ -21,12 +23,14 @@ def get_categories():
     return jsonify(all_cat)
 
 
-def get_category(cat_id):
+@token_required
+def get_category(current_user, cat_id):
     """ get a category"""
     pass
 
 @app_views.route('/categories', methods=['POST'], strict_slashes=False)
-def post_category():
+@token_required
+def post_category(current_user):
     """ post category """
     categories = storage.all(DamageCategory).values()
     data = request.get_json()
@@ -42,12 +46,14 @@ def post_category():
     cat.save()
     return jsonify(cat.to_dict())
 
-def put_category(cat_id):
+@token_required
+def put_category(current_user, cat_id):
     """update a category"""
     pass
 
 @app_views.route('/categories/<cat_id>', methods=["DELETE"], strict_slashes=False)
-def delete_category(cat_id):
+@token_required
+def delete_category(current_user, cat_id):
     """ delete a category """
     cat = storage.get(DamageCategory, cat_id)
 
