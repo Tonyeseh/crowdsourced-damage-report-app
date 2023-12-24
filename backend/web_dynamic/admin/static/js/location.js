@@ -92,3 +92,23 @@ locationSubmit.addEventListener('click', (e) => {
         }) 
     }
 })
+
+
+deleteRecord = (elem) => {
+  locationId = elem.dataset.locationId
+  deleteButton = document.getElementById('deleteButton')
+
+  deleteButton.addEventListener('click', (e) => {
+      e.preventDefault()
+
+      fetch(`http://127.0.0.1:5001/api/v1/locations/${locationId}`, {
+          method: "DELETE",
+          headers: {
+              Authorization: `Bearer ${getCookie('admin_access_token')}`
+          }
+      }).then(res => res.json())
+      .then(data => {
+          data.error || elem.parentNode.parentNode.remove()
+      })
+  })
+}
