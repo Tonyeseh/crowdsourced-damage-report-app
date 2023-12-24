@@ -110,13 +110,14 @@ def put_infrastructure(infras_id):
     return make_response(jsonify(return_dict(infras)), 200)
 
 # delete
-@app_views.route('/infrastuctures/<infras_id>', methods=['DELETE'], strict_slashes=False)
-def delete_infrastructure(infras_id):
+@app_views.route('/infrastructures/<infras_id>', methods=['DELETE'], strict_slashes=False)
+@token_required
+def delete_infrastructure(current_user, infras_id):
     """deletes an infrastructure instance"""
     infras = storage.get(Infrastructure, infras_id)
 
     if not infras:
-        abort(404)
+        abort(404, description="Invalid Infrastructure ID")
 
     storage.delete(infras)
     storage.save()
