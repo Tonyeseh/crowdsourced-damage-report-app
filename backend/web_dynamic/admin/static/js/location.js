@@ -59,24 +59,19 @@ locationSubmit.addEventListener('click', (e) => {
                         </div>
                       </td>
                       <td>
-                        <p class="text-xs font-weight-bold mb-0">1</p>
-                      </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="badge badge-sm bg-gradient-success">75%</span>
+                        <p class="text-xs fw-bolder mb-0 text-center">0</p>
                       </td>
                       <td class="align-middle text-center">
                         <span class="text-secondary text-xs font-weight-bold">${data.created_at}</span>
                       </td>
-                      <td class="align-middle">
-                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs data-toggle="tooltip" data-original-title="Edit user">
-                          Edit
+                      <td class="align-middle text-center">
+                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs mx-2" data-location-id=${data.id} data-toggle="tooltip" data-original-title="Edit Location" onclick="editRecord(this)" data-bs-toggle="modal" data-bs-target="#editModal">
+                          <i class="material-icons opacity-10">edit</i>
+                        </a>
+                        <a href="javascript:;" class="text-secondary text-xs text-danger mx-2" data-location-id=${data.id} data-toggle="tooltip" data-original-title="Delete Location" onclick="deleteRecord(this)" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                          <i class="material-icons opacity-10">close</i>
                         </a>
                       </td>
-                    <td class="align-middle">
-                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs text-danger" id=${data.id} data-toggle="tooltip" data-original-title="Delete Location onclick="delete_location(${data.id})">
-                        Delete
-                    </a>
-                    </td>
                     </tr>
             `
             alertBox.innerHTML += `
