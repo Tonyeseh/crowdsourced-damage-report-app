@@ -40,11 +40,11 @@ def post_category(current_user):
 
     for cat in categories:
         if data.get('name') == cat.name:
-            return jsonify({"status": "error", "message": "category already exists"})
+            return jsonify({"status": "error", "data": None, "message": "category already exists"})
 
     cat = DamageCategory(**data)
     cat.save()
-    return jsonify(cat.to_dict())
+    return jsonify({"status": "success", "data": cat.to_dict(), "message": "Category Added"}), 201
 
 @token_required
 def put_category(current_user, cat_id):
@@ -58,8 +58,16 @@ def delete_category(current_user, cat_id):
     cat = storage.get(DamageCategory, cat_id)
 
     if not cat:
-        abort(404)
+        return {
+            "status": "error", 
+            "data": None,
+            "message": "Invalid Category ID"
+        }
     storage.delete(cat)
     storage.save()
 
-    return jsonify({})
+    return jsonify({
+        "status": "success",
+        "data": {},
+        "message": "Record Deleted"
+    })

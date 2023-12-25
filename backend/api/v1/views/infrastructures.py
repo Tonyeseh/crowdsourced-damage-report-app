@@ -66,26 +66,43 @@ def get_infrastructures_from_loc(location_id):
 @token_required
 def post_infrastructure(current_user, location_id):
     """ add an Infrastructure """
-    if not request.get_json():
-        abort(400, description="Not a JSON")
+    try:
+        if not request.get_json():
+            return {
+                    "status": "error",
+                    "data": None,
+                    "message": "Not a JSON"
+                }, 400
 
-    print("location", location_id)
+        location = storage.get(Location, location_id)
+        if not location:
+            return {
+                    "status": "error",
+                    "data": None,
+                    "message": "Invalid Location ID"
+                }, 404
 
-    location = storage.get(Location, location_id)
-    if not location:
-        abort(404)
+        infras_attr = ['name', 'description']
+        for val in infras_attr:
+            if val not in request.get_json():
+                return {
+                    "status": "error",
+                    "data": None,
+                    "message": '{val} is missing'.format(val=val)
+                }, 400
 
-    infras_attr = ['name', 'description']
-    for val in infras_attr:
-        if val not in request.get_json():
-            abort(400, '{val} is missing'.format(val=val))
+        data = request.get_json()
+        instance = Infrastructure(**data)
+        instance.location_id = location.id
+        instance.save()
 
-    data = request.get_json()
-    instance = Infrastructure(**data)
-    instance.location_id = location.id
-    instance.save()
-
-    return make_response(return_dict(instance), 201)
+        return make_response({"status": "success", "data": return_dict(instance), "message": "Record Created"}, 201)
+    except Exception as e:
+        return {
+            "status": "error",
+            "data": None,
+            "message": str(e)
+        }, 500
     
 
 # put
@@ -114,12 +131,29 @@ def put_infrastructure(infras_id):
 @token_required
 def delete_infrastructure(current_user, infras_id):
     """deletes an infrastructure instance"""
-    infras = storage.get(Infrastructure, infras_id)
+    try:
+        infras = storage.get(Infrastructure, infras_id)
 
-    if not infras:
-        abort(404, description="Invalid Infrastructure ID")
+        if not infras:
+            return {
+                "status": "success",
+                "data": {},
+                "message": "Invalid Infrastructure ID"
+            }, 404
 
-    storage.delete(infras)
-    storage.save()
+        storage.delete(infras)
+        storage.save()
 
-    return jsonify({})
+        return make_response(
+            jsonify({
+                "status": "success",
+                "data": {},
+                "message": "Record Deleted"}), 
+            200
+            )
+    except Exception as e:
+        return {
+            "status": "error",
+            "data": None,
+            "message": str(e)
+        }, 500

@@ -161,16 +161,18 @@ def post_damage(current_user, facility_id):
 def put_damage(current_user, damage_id):
     """update damage"""
     try:
-        print('i am here')
         damage = storage.get(Damage, damage_id)
 
         if not damage:
-            abort(404)
+            return {
+                "status": "error", 
+                "data": None,
+                "message": "Invalid Damage ID"
+            }, 404
 
         ignore = ['id', 'updated_at', 'created_at', 'worker_id']
     
         data = dict(request.form)
-        print(data)
 
         for key, value in data.items():
             if key not in ignore:
@@ -179,11 +181,17 @@ def put_damage(current_user, damage_id):
         if data.get('worker_id', None):
             worker = storage.get(Worker, data.get('worker_id'))
             if not worker:
-                abort(404)
+                return {
+                    "status": "error", 
+                    "data": None,
+                    "message": "Invalid Category ID"
+                }, 404
 
             if damage.working_on and sorted(damage.working_on, key=lambda x: x.created_at, reverse=True)[0].status != 'Failed':
                 return {
-                    "Error": "Already Assigned"
+                    "status": "error", 
+                    "data": None,
+                    "message": "Damage is already Assigned"
                 }
                     
             
@@ -194,19 +202,18 @@ def put_damage(current_user, damage_id):
             damage.save()
             repair.save()
             
-            # print(repair.to_dict())
-            
         return_data = {
             "worker_name": " ".join([repair.workers.first_name, repair.workers.last_name]),
             "damage_state": damage.state,
         }
                 
-        return jsonify({"data":return_data})
+        return jsonify({"status": "success", "data":return_data, "message": "Record Updated Successfully"})
         
     except Exception as e:
         return {
-            "error": str(e),
-            "data": None
+            "message": str(e),
+            "data": None,
+            "status": "error"
         }
 
 
@@ -220,12 +227,20 @@ def delete_damage(current_user, damage_id):
     damage = storage.get(Damage, damage_id)
 
     if not damage:
-        abort(404)
+        return {
+            "status": "error", 
+            "data": None,
+            "message": "Invalid Damage ID"
+        }
 
     storage.delete(damage)
     storage.save()
 
-    return jsonify({}), 200
+    return jsonify({
+        "status": "success",
+        "data": {},
+        "message": "Record Deleted"
+    }), 200
 
 #get workers for a damage
 @app_views.route('/damages/<damage_id>/workers', methods=['GET'])

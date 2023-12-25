@@ -53,24 +53,52 @@ def get_facility(current_user, facility_id):
 @token_required
 def post_facility(current_user, infras_id):
     """ add an facility """
-    if not request.get_json():
-        abort(400, description="Not a JSON")
+    try:
+        if not request.get_json():
+            return {
+                "status": "error",
+                "data": None,
+                "message": "Not a JSON"
+            }, 400
 
-    infras = storage.get(Infrastructure, infras_id)
-    if not infras:
-        abort(404)
+        infras = storage.get(Infrastructure, infras_id)
+        if not infras:
+            return {
+                "status": "error",
+                "data": None,
+                "message": "Invalid Facility ID"
+            }, 404
 
-    infras_attr = ['name', 'description']
-    for val in infras_attr:
-        if val not in request.get_json():
-            abort(400, '{val} is missing'.format(val=val))
+        infras_attr = ['name', 'description']
+        for val in infras_attr:
+            if val not in request.get_json():
+                return {
+                    "status": "error",
+                    "data": None,
+                    "message": '{val} is missing'.format(val=val)
+                }, 400
 
-    data = request.get_json()
-    instance = Facility(**data)
-    instance.infrastructure_id = infras.id
-    instance.save()
+        data = request.get_json()
+        instance = Facility(**data)
+        instance.infrastructure_id = infras.id
+        instance.save()
+        
+        return_data = instance.to_dict()
+        return_data['infrastructure_name'] = instance.infrastructures.name
+        return_data['location_name'] = instance.infrastructures.location.name
 
-    return make_response(instance.to_dict(), 201)
+        return {
+            "status": "success",
+            "data": return_data,
+            "message": "Record Created"
+        } , 201
+    
+    except Exception as e:
+        return {
+            "status": "error",
+            "data": None,
+            "message": str(e)
+        }, 500
 
 # put a facility
 @app_views.route('/facilites/<facility_id>', methods=['PUT'], strict_slashes=False)
@@ -82,7 +110,11 @@ def put_facility(current_user, facility_id):
 
     facility = storage.get(Infrastructure, facility_id)
     if not facility:
-        abort(404)
+        return {
+            "status": "error",
+            "data": None,
+            "message": "Invalid Facility ID"
+            }
 
     ignore = ['id', 'updated_at', 'created_at']
 
@@ -99,12 +131,24 @@ def put_facility(current_user, facility_id):
 @token_required
 def delete_facility(current_user, facility_id):
     """deletes an infrastucture """
-    facility = storage.get(Facility, facility_id)
+    try:
+        facility = storage.get(Facility, facility_id)
 
-    if not facility:
-        abort(404)
+        if not facility:
+            return {
+            "status": "error",
+            "data": None,
+            "message": "Invalid Facility ID"
+            }
 
-    storage.delete(facility)
-    storage.save()
+        storage.delete(facility)
+        storage.save()
 
-    return jsonify({}), 200
+        return jsonify({"status": "success", "data": {}, "message": "Record Deleted"}), 200
+    
+    except Exception as e:
+        return {
+            "status": "error",
+            "data": None,
+            "message": str(e)
+        }, 500
