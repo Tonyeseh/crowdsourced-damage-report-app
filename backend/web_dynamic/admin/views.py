@@ -245,12 +245,15 @@ def get_damages(current_user):
 def get_categories(current_user):
     """ get all categories """
     damages = storage.all(Damage).values()
-    all_cat = [cat.to_dict() for cat in storage.all(DamageCategory).values()]
-    for dam in damages:
+    all_cat = storage.all(DamageCategory).values()
+    
+    for damage in damages:
         for cat in all_cat:
-            if cat['id'] == dam.category_id:
-                cat['damage_count'] = cat.get('damage_count', 0) + 1
-                break
+            if damage.category_id == cat.id:
+                if "damage_count" not in cat.__dict__.keys():
+                    cat.damage_count = 1
+                else:
+                    cat.damage_count += 1
 
     return render_template(
         'admin/category.html',
