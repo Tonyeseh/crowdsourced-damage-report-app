@@ -36,10 +36,7 @@ locationSubmit.addEventListener('click', (e) => {
 
     cookie = getCookie('admin_access_token')
 
-    console.log(`Bearer ${cookie}`)
-
     if (locationNameVal.length > 5) {
-        console.log('it would be sent')
         fetch('http://127.0.0.1:5001/api/v1/locations', {
             body: JSON.stringify({name: locationNameVal}),
             method: "POST",
@@ -48,13 +45,15 @@ locationSubmit.addEventListener('click', (e) => {
                 Authorization: `Bearer ${cookie}`
               }
         }).then(res => res.json()).then(data => {
-            console.log(data)
+          if (data.status === "success") {
+            document.getElementById('successMessage').innerText = data.message
+            $("#successModal").modal('show')
             tbody.innerHTML += `
-            <tr>
+                    <tr>
                       <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">${data.name}</h6>
+                            <h6 class="mb-0 text-sm">${data.data.name}</h6>
                           </div>
                         </div>
                       </td>
@@ -62,7 +61,7 @@ locationSubmit.addEventListener('click', (e) => {
                         <p class="text-xs fw-bolder mb-0 text-center">0</p>
                       </td>
                       <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">${data.created_at}</span>
+                        <span class="text-secondary text-xs font-weight-bold">${data.data.created_at}</span>
                       </td>
                       <td class="align-middle text-center">
                         <a href="javascript:;" class="text-secondary font-weight-bold text-xs mx-2" data-location-id=${data.id} data-toggle="tooltip" data-original-title="Edit Location" onclick="editRecord(this)" data-bs-toggle="modal" data-bs-target="#editModal">
@@ -73,17 +72,14 @@ locationSubmit.addEventListener('click', (e) => {
                         </a>
                       </td>
                     </tr>
-            `
-            alertBox.innerHTML += `
-            <div class="alert alert-success alert-dismissible text-white" role="alert" id="alert">
-            <span class="text-sm">${data.name} Added Successfully</span>
-            <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            </div>
-            `
+                  `
 
             locationName.value = ""
+          }
+          else {
+            document.getElementById("failureMessage").innerText = data.message
+            $("#failureModal").modal('show')
+          }
         }) 
     }
 })
@@ -103,7 +99,15 @@ deleteRecord = (elem) => {
           }
       }).then(res => res.json())
       .then(data => {
-          data.error || elem.parentNode.parentNode.remove()
+        if (data.status === "success") {
+          document.getElementById("successMessage").innerText = data.message
+          $("#successModal").modal('show')
+          elem.parentNode.parentNode.remove()
+        }
+        else {
+          document.getElementById("failureMessage").innerText = data.message
+          $("#failureModal").modal('show')
+        }
       })
   })
 }

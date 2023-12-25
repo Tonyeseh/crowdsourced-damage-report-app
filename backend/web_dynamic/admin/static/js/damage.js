@@ -34,8 +34,17 @@ function deleteHelper(elem) {
             }
         }).then(res => res.json())
         .then(data => {
+            $("#deleteModal").modal('hide')
+            if (data.status === 'success') {
+                document.getElementById('successMessage').innerText = data.message
+                $("#successModal").modal('show');
 
-        data.error || elem.parentNode.parentNode.remove()
+                elem.parentNode.parentNode.remove()
+            }
+            else {
+                $("#failureMessage").innerText = data.message
+                $("#failureModal").modal('show')
+            }
     })
     })
 }
@@ -76,32 +85,19 @@ function editRecord(elem) {
             }
         }).then(res => res.json())
         .then(data => {
-            if (data.data) {
+            $("#editModal").modal('hide')
+            if (data.status == "success") {
+                document.getElementById('successMessage').innerText = data.message
+                $("#successModal").modal('show');
                 damageWorker.innerText = data.data.worker_name
                 damageState.innerHTML = `<span class="badge badge-sm bg-gradient-info">${data.data.damage_state}</span>`
             }
+            else {
+                document.getElementById("failureMessage").innerText = data.message
+                console.log(data.message)
+                $("#failureModal").modal('show')
+            }
         })
-        .catch(e => console.log(e))
     }
     })
 }
-
-// updateRecord = (element) => {
-//     workerId = element.parentNode.previousSibling.previousSibling.childNodes[1]
-
-//     if (workerId.value && element.id) {
-
-//     form = new FormData()
-//     form.append('damage_id', element.id)
-//     form.append('worker_id', workerId.value)
-
-//     fetch('http://127.0.0.1:5001/api/v1/damages/working_on', {
-//         body: form,
-//         method: 'POST',
-//         headers: {
-//             Authorization: `Bearer ${getCookie('admin_access_token')}`
-//         }
-//     }).then(res => res.json())
-//     .then(data => console.log(data))
-// }
-// }

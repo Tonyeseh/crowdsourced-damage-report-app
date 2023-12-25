@@ -2,6 +2,7 @@ categoryName = document.getElementById("category-name")
 categorySubmit = document.getElementById("submit-category")
 alertBox = document.getElementById('information')
 tbody = document.getElementById("table-body")
+successModal = document.getElementById('successModal')
 
 categoryName.value = ""
 
@@ -42,45 +43,45 @@ categorySubmit.addEventListener('click', (e) => {
               "Content-Type": "application/json",
               }
         }).then(res => res.json()).then(data => {
-            if (!data.error){
-            tbody.innerHTML += `
-            <tr>
+            if (data.status === 'success') {
+
+              document.getElementById('successMessage').innerText = data.message
+              $("#successModal").modal('show');
+
+              tbody.innerHTML += `
+                    <tr>
                       <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">${data.name}</h6>
+                            <h6 class="mb-0 text-sm">${data.data.name}</h6>
                           </div>
                         </div>
                       </td>
                       <td class="align-middle text-center">
-                        <p class="text-xs font-weight-bold mb-0">${data.damage_count || 0}</p>
+                        <p class="text-xs font-weight-bold mb-0">${data.data.damage_count || 0}</p>
                       </td>
                       <td class="align-middle text-center text-xs">
                         <span class="fw-bolder">0</span>
                       </td>
                       <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">${data.created_at}</span>
+                        <span class="text-secondary text-xs font-weight-bold">${data.data.created_at}</span>
                       </td>
                       <td class="align-middle text-center">
-                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs mx-2" data-cat-id=${data.id} data-toggle="tooltip" data-original-title="Edit Damage" onclick="editRecord(this)" data-bs-toggle="modal" data-bs-target="#editModal">
+                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs mx-2" data-cat-id=${data.data.id} data-toggle="tooltip" data-original-title="Edit Damage" onclick="editRecord(this)" data-bs-toggle="modal" data-bs-target="#editModal">
                           <i class="material-icons opacity-10">edit</i>
                         </a>
-                        <a href="javascript:;" class="text-secondary text-xs text-danger mx-2" data-cat-id=${data.id} data-toggle="tooltip" data-original-title="Delete Location" onclick="deleteRecord(this)" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <a href="javascript:;" class="text-secondary text-xs text-danger mx-2" data-cat-id=${data.data.id} data-toggle="tooltip" data-original-title="Delete Location" onclick="deleteRecord(this)" data-bs-toggle="modal" data-bs-target="#deleteModal">
                             <i class="material-icons opacity-10">close</i>
                         </a>
-                    </td>
+                      </td>
                     </tr>
             `
-            alertBox.innerHTML += `
-            <div class="alert alert-success alert-dismissible text-white" role="alert" id="alert">
-            <span class="text-sm">${data.name} Added Successfully</span>
-            <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            </div>
-            `
-
             categoryName.value = ""
+            }
+
+            else {
+              document.getElementById("failureMessage").innerText = data.message
+              $("#failureModal").modal('show')
             }
         }) 
     }
@@ -89,6 +90,7 @@ categorySubmit.addEventListener('click', (e) => {
 
 
 deleteRecord = (elem) => {
+  $("#deleteModal").modal('show')
   catId = elem.dataset.catId
   deleteButton = document.getElementById('deleteButton')
 
@@ -102,7 +104,17 @@ deleteRecord = (elem) => {
           }
       }).then(res => res.json())
       .then(data => {
-          data.error || elem.parentNode.parentNode.remove()
+        $("#deleteModal").modal('hide')
+        if (data.status === 'success') {
+          document.getElementById('successMessage').innerText = data.message
+          $("#successModal").modal('show');
+
+          elem.parentNode.parentNode.remove()
+        }
+        else {
+          document.getElementById("failureMessage").innerText = data.message
+          $("#failureModal").modal('show')
+        }
       })
   })
 }

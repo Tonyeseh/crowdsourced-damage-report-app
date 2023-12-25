@@ -41,23 +41,28 @@ submitBtn.addEventListener('click', (e) => {
     })
     .then(res => res.json())
     .then(data => {
+        if (data.status === 'success') {
+
+            document.getElementById('successMessage').innerText = data.message
+            $("#successModal").modal('show');
+
         tbody.innerHTML += `
         <tr>
             <td>
             <div class="d-flex px-2 py-1">
                 <div class="d-flex flex-column justify-content-center">
-                <h6 class="mb-0 text-sm align-middle">${data.name}</h6>
+                <h6 class="mb-0 text-sm align-middle">${data.data.name}</h6>
                 </div>
             </div>
             </td>
             <td class="text-xs font-weight-bold mb-0 align-middle">
-                ${data.location_name}
+                ${data.data.location_name}
             </td>
             <td class="align-middle text-center text-xs">
             <span class="fw-bold">0</span>
             </td>
             <td class="align-middle text-center">
-            <span class="text-secondary text-xs font-weight-bold">${data.created_at}</span>
+            <span class="text-secondary text-xs font-weight-bold">${data.data.created_at}</span>
             </td>
             <td class="align-middle text-center">
             <a href="javascript:;" class="text-secondary font-weight-bold text-xs mx-2" data-infras-id=${data.id} data-toggle="tooltip" data-original-title="Edit Infrastructure" onclick="editRecord(this)" data-bs-toggle="modal" data-bs-target="#editModal">
@@ -69,16 +74,14 @@ submitBtn.addEventListener('click', (e) => {
             </td>
         </tr>
     `
-    alertBox.innerHTML += `
-    <div class="alert alert-success alert-dismissible text-white" role="alert" id="alert">
-    <span class="text-sm">${data.name} Added Successfully</span>
-    <button type="button" class="btn-close text-lg py-3 opacity-10" data-bs-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-    </div>
-    `
     description.value = ""
     infras_name.value = ""
+    }
+
+    else {
+        document.getElementById("failureMessage").innerText = data.message
+        $("#failureModal").modal('show')
+    }
     })
 }
 })
@@ -98,7 +101,17 @@ deleteRecord = (elem) => {
             }
         }).then(res => res.json())
         .then(data => {
-            data.error || elem.parentNode.parentNode.remove()
+            $("#deleteModal").modal('hide')
+            if (data.status === 'success') {
+                document.getElementById('successMessage').innerText = data.message
+                $("#successModal").modal('show');
+
+                elem.parentNode.parentNode.remove()
+            }
+            else {
+                $("#failureMessage").innerText = data.message
+                $("#failureModal").modal('show')
+            }
         })
     })
 }

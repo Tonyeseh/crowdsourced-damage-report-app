@@ -1,5 +1,5 @@
 {% extends "admin/base.html" %}
-{% block title %}Facilities{% endblock title %}
+{% block title %}Damage Categories{% endblock title %}
   {% block body %}
     {% include "admin/partials/_side_bar.html" %}
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
@@ -22,15 +22,14 @@
                   <thead>
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Damage Count</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No. of Damages</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Damage Count</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Workers Count</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Date Added</th>
-                      <th class="text-secondary opacity-7"></th>
-                      <th class="text-secondary opacity-7"></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
                     </tr>
                   </thead>
                   <tbody id="table-body">
-                    {% for cat in categories %}
+                    {% for cat in categories | sort(attribute="name") %}
                     <tr>
                       <td>
                         <div class="d-flex px-2 py-1">
@@ -39,25 +38,23 @@
                           </div>
                         </div>
                       </td>
-                      <td>
-                        <p class="text-xs font-weight-bold mb-0">{{cat.get('damage_count', 0)}}</p>
+                      <td class="align-middle text-center">
+                        <span class="text-xs fw-bolder mb-0">{% if cat.damage_count %}{{cat.damage_count}} {% else %}0{% endif %}</span>
                       </td>
-                      <td class="align-middle text-center text-sm">
-                        <span class="badge badge-sm bg-gradient-success">75%</span>
+                      <td class="align-middle text-center text-xs">
+                        <span class="fw-bolder">{{cat.workers | count}}</span>
                       </td>
                       <td class="align-middle text-center">
                         <span class="text-secondary text-xs font-weight-bold">{{cat.created_at}}</span>
                       </td>
-                      <td class="align-middle">
-                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs data-toggle="tooltip" data-original-title="Edit user">
-                          Edit
+                      <td class="align-middle text-center">
+                        <a href="javascript:;" class="text-secondary font-weight-bold text-xs mx-2" data-cat-id={{cat.id}} data-toggle="tooltip" data-original-title="Edit Damage" onclick="editRecord(this)" data-bs-toggle="modal" data-bs-target="#editModal">
+                          <i class="material-icons opacity-10">edit</i>
+                        </a>
+                        <a href="javascript:;" class="text-secondary text-xs text-danger mx-2" data-cat-id={{cat.id}} data-toggle="tooltip" data-original-title="Delete Location" onclick="deleteRecord(this)" data-bs-toggle="modal">
+                            <i class="material-icons opacity-10">close</i>
                         </a>
                       </td>
-                    <td class="align-middle">
-                    <a href="javascript:;" class="text-secondary font-weight-bold text-xs text-danger" id={{cat.id}} data-toggle="tooltip" data-original-title="Delete Location onclick="delete_location({{this}})">
-                        Delete
-                    </a>
-                    </td>
                     </tr>
                     {% endfor %}
                   </tbody>
@@ -95,6 +92,65 @@
       </div>
     {% include "admin/partials/_footer.html" %}
   </div>
+
+
+    <!-- Delete Modal -->
+    <div id="deleteModal" class="modal fade" aria-modal="true">
+      <div class="modal-dialog modal-confirm">
+        <div class="modal-content">
+          <div class="modal-header flex-column">
+            <div class="icon-box">
+              <i class="material-icons">close</i>
+            </div>						
+            <h4 class="modal-title w-100">Are you sure?</h4>	
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Do you really want to delete this record? This process cannot be undone.</p>
+          </div>
+          <div class="modal-footer justify-content-center">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="deleteButton">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- success Modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="successModal">
+      <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-body text-center">
+            <div id="checkIcon">
+              <i class="text-success material-icons text-9xl">check_circle</i>
+            </div>
+            <div class="mt-4 py-2">
+              <h5 class="px-4 pb-0 mb-1 text-secondary">Successful</h5>
+              <p class="mt-4 text-sm" id="successMessage">Your Account Is Active</p>
+            </div>
+            <div class="py-1"><button type="button" class="btn btn-sm btn-outline-success rounded-pill px-5" data-bs-dismiss="modal">OK</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- failure Modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="failureModal">
+      <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-body text-center">
+            <div id="checkIcon">
+              <i class="text-danger material-icons text-9xl">cancel</i>
+            </div>
+            <div class="mt-4 py-2">
+              <h5 class="px-4 pb-0 mb-1 text-secondary">Failed</h5>
+              <p class="mt-4 text-sm" id="failureMessage">Your Account Is Active</p>
+            </div>
+            <div class="py-1"><button type="button" class="btn btn-sm btn-danger rounded-pill px-5" data-bs-dismiss="modal">Close</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
 <script src="{{ url_for('admin_views.static', filename='js/category.js')}}"></script>
 </main>
 

@@ -7,12 +7,38 @@ otherFacility = document.getElementById('other-facility')
 images = document.getElementById('images')
 
 
+function getCookie(name) {
+    // Split cookie string and get all individual name=value pairs in an array
+    var cookieArr = document.cookie.split(";");
+    
+    // Loop through the array elements
+    for(var i = 0; i < cookieArr.length; i++) {
+        var cookiePair = cookieArr[i].split("=");
+        
+        /* Removing whitespace at the beginning of the cookie name
+        and compare it with the given string */
+        if(name == cookiePair[0].trim()) {
+            // Decode the cookie value and return
+            return decodeURIComponent(cookiePair[1]);
+        }
+    }
+    
+    // Return null if not found
+    return null;
+  }
+
+
 // getting the infrastructures
 selLocation.addEventListener('change', (e) => {
     selInfras.innerHTML = `
         <option value="" selected>Pick an Infrastructure</option>
     `
-    fetch(`http://127.0.0.1:5001/api/v1/locations/${selLocation.value}/infrastructures`).then(res => res.json())
+    if (selLocation.value) {
+    fetch(`http://127.0.0.1:5001/api/v1/locations/${selLocation.value}/infrastructures`, {
+        headers: {
+            Authorization: `Bearer ${getCookie('user_access_token')}`
+        }
+    }).then(res => res.json())
     .then(data => {
         data.forEach(item => {
             console.log(item)
@@ -21,6 +47,7 @@ selLocation.addEventListener('change', (e) => {
             `
         });
     })
+}
 })
 
 // getting facilities
@@ -28,8 +55,14 @@ selInfras.addEventListener('change', e => {
     selFacility.innerHTML = `
         <option value="" selected>Pick an Infrastructure</option>
     `
-    fetch(`http://127.0.0.1:5001/api/v1/infrastructures/${selInfras.value}/facilities`).then(res => res.json())
+    if (selInfras.value) {
+    fetch(`http://127.0.0.1:5001/api/v1/infrastructures/${selInfras.value}/facilities`, {
+        headers: {
+            Authorization: `Bearer ${getCookie('user_access_token')}`
+        }
+    }).then(res => res.json())
     .then(data => {
+        console.log(data)
         data.forEach(item => {
             console.log(item)
             selFacility.innerHTML += `
@@ -38,6 +71,7 @@ selInfras.addEventListener('change', e => {
         });
         selFacility.innerHTML += ` <option value="others">Others</option>`
     })
+}
 })
 
 selFacility.addEventListener('change', (e) => {
