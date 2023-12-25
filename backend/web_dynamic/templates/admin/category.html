@@ -34,7 +34,7 @@
                       <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">{{cat.name}}</h6>
+                            <h6 class="mb-0 text-sm" id="cat-name-{{cat.id}}" data-cat-name-{{cat.id}}="{{cat.name}}">{{cat.name}}</h6>
                           </div>
                         </div>
                       </td>
@@ -147,6 +147,30 @@
               <p class="mt-4 text-sm" id="failureMessage">Your Account Is Active</p>
             </div>
             <div class="py-1"><button type="button" class="btn btn-sm btn-danger rounded-pill px-5" data-bs-dismiss="modal">Close</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-modal="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close d-flex align-items-center justify-content-center" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true" class="material-icons opacity">close</span>
+            </button>
+          </div>
+          <div class="modal-body px-5">
+            <h3 class="text-center mb-3">Update Category</h3>
+            <form action="#" class="signup-form">
+              <div class="form-group mb-3">
+                <input type="text" class="form-control" id="catName" placeholder="Category Name">
+              </div>
+              <div class="form-group mt-5">
+                <button type="button" id="editButton" class="form-control btn btn-primary rounded submit px-3">Update Record</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

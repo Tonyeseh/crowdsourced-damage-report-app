@@ -53,7 +53,7 @@ categorySubmit.addEventListener('click', (e) => {
                       <td>
                         <div class="d-flex px-2 py-1">
                           <div class="d-flex flex-column justify-content-center">
-                            <h6 class="mb-0 text-sm">${data.data.name}</h6>
+                            <h6 class="mb-0 text-sm" id="cat-name-${data.data.id}" data-cat-name-${data.data.id}="${data.data.name}">${data.data.name}</h6>
                           </div>
                         </div>
                       </td>
@@ -87,6 +87,43 @@ categorySubmit.addEventListener('click', (e) => {
     }
 })
 
+
+editRecord = (elem) => {
+  catId = elem.dataset.catId
+  console.log(document.getElementById(`cat-name-${catId}`).innerText)
+
+  document.getElementById("catName").value = document.getElementById(`cat-name-${catId}`).innerText
+
+  document.getElementById('editButton').addEventListener('click', (e) => {
+    e.preventDefault()
+
+    if (document.getElementById("catName").value) {
+      form = new FormData()
+      form.append('name', document.getElementById("catName").value)
+      fetch(`http://127.0.0.1:5001/api/v1/categories/${catId}`, {
+        body: form,
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${getCookie('admin_access_token')}`
+        }
+      }).then(res => res.json())
+      .then(data => {
+        $("#editModal").modal('hide')
+        
+        if (data.status === "success") {
+          document.getElementById("successMessage").innerText = data.message
+          $("#successModal").modal('show')
+
+          document.getElementById(`cat-name-${catId}`).innerText = data.data.name
+        }
+        else {
+          document.getElementById("failureMessage").innerText = data.message
+          $("#failureModal").modal('show')
+        }
+      })
+    }
+  })
+}
 
 
 deleteRecord = (elem) => {
