@@ -192,7 +192,7 @@ def put_damage(current_user, damage_id):
                     "status": "error", 
                     "data": None,
                     "message": "Damage is already Assigned"
-                }
+                }, 400
                     
             
             repair = WorkingOn()
@@ -214,7 +214,7 @@ def put_damage(current_user, damage_id):
             "message": str(e),
             "data": None,
             "status": "error"
-        }
+        }, 500
 
 
     # return make_response(jsonify(add_damage_info(damage)), 200)
@@ -350,4 +350,4 @@ def post_working_on(current_user):
         }
         
     except Exception as e:
-        return {"error": str(e)}
+        return {"error": str(e)}, 500
