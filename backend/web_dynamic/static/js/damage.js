@@ -19,13 +19,10 @@ function getCookie(name) {
   }
 
 
-function verifyJob(elem) {
+function verifyRepair() {
     verify = document.getElementById('verify')
 
     damage_id = location.pathname.split('/')[2]
-    console.log(elem)
-
-    console.log(verify.value)
 
     if (verify.value) {
 
@@ -40,7 +37,26 @@ function verifyJob(elem) {
                 Authorization: `Bearer ${getCookie('user_access_token')}`
             }
         }).then(res => res.json())
-        .then(data => console.log(data))
-        .catch(err => console.log(`error ${err}`))
+        .then(data => {
+            console.log(data)
+            if (data.status === 'success') {
+                $('#editModal').modal('hide')
+
+                document.getElementById('successMessage').innerText = data.message
+                $("#successModal").modal('show');
+
+                document.getElementById('damage-status').innerText = data.data.state
+                document.getElementById('ratingDiv').style.display = 'none'
+            }
+
+            else {
+              document.getElementById("failureMessage").innerText = data.message
+              $("#failureModal").modal('show')
+            }  
+        }).catch(e => {
+            console.log(e)
+            document.getElementById("failureMessage").innerText = e
+            $("#failureModal").modal('show')
+        })
     }
 }

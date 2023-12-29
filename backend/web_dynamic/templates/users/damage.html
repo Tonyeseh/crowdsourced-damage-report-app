@@ -1,6 +1,6 @@
 {% extends "users/base.html" %}
 
-{% block title %}Damage{% endblock title %}
+{% block title %}View Damage{% endblock title %}
 
 {% block body %}
 {% include "users/partials/_nav.html" %}
@@ -35,7 +35,7 @@
                         <div class="small mb-1">{{damage.category.name}} Problem</div>
                         <h1 class="display-5 fw-bolder">{{damage.facilities.name}} in {{damage.facilities.infrastructures.name}} </h1>
                         <div class="fs-6 mb-2">
-                            <span class="fw-bolder">Status: </span><span class="">{{damage.state}}</span>
+                            <span class="fw-bolder">Status: </span><span id="damage-status">{{damage.state}}</span>
                         </div>
                         <div class="fs-6 mb-2">
                             <span class="fw-bolder">Priority: </span><span class="">{{damage.priority}}</span>
@@ -48,27 +48,77 @@
                             <span class="fs-6">{{damage.description}}</span>
                         </div>
                         {% if user and damage.state == 'Awaiting Verification' %}
-                        <form>
-                          <div class="form-row align-items-center">
-                            <div class="col-auto form-row my-1">
-                              <label class="mr-sm-2 fw-bolder fs-5" for="verify">Has the job been done?</label>
-                              <select class="custom-select mr-sm-2" id="verify">
-                                <option selected value="">Choose...</option>
-                                <option value="Yes">Yes</option>
-                                <option value="No">No</option>
-                              </select>
-                            </div>
-                            <div class="col-auto my-1">
-                              <button type="button" class="btn btn-primary" data-damage-id="{{ damage.id }}" onclick="verifyJob(this)">Submit</button>
-                            </div>
+                          <div class="my-3" id="ratingDiv">
+                            <button type="button" class="form-control btn btn-primary rounded submit" data-toggle="tooltip" data-original-title="Rate Repair" data-bs-toggle="modal" data-bs-target="#editModal">Rate Repair</button>
                           </div>
-                        </form>
                         {% endif %}
                     </div>
                 </div>
             </div>
         </section>
 
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-modal="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close d-flex align-items-center justify-content-center" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true" class="fa fa-close text-xs"></span>
+            </button>
+          </div>
+          <div class="modal-body px-5">
+            <h3 class="text-center mb-3">Rate Repair</h3>
+            <form action="#" class="signup-form">
+              <label class="form-label" for="verify">Has the job been done?</label>
+                <select class="custom-select mr-sm-2" id="verify">
+                  <option selected value="">Choose...</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+                <div class="form-group mt-4">
+                  <button type="button" id="editButton" class="form-control btn btn-primary rounded px-3" onclick="verifyRepair()">Submit Rating</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- success Modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="successModal">
+      <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-body text-center">
+            <div id="checkIcon">
+              <i class="text-success fa fa-check_circle text-9xl"></i>
+            </div>
+            <div class="mt-4 py-2">
+              <h5 class="px-4 pb-0 mb-1 text-secondary">Successful</h5>
+              <p class="mt-4 text-sm" id="successMessage">Your Account Is Active</p>
+            </div>
+            <div class="py-1"><button type="button" class="btn btn-sm btn-outline-success rounded-pill px-5" data-bs-dismiss="modal">OK</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- failure Modal -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="failureModal">
+      <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-body text-center">
+            <div id="checkIcon">
+              <i class="text-danger fa fa-exclamation-triangle text-9xl"></i>
+            </div>
+            <div class="mt-4 py-2">
+              <h5 class="px-4 pb-0 mb-1 text-secondary">Failed</h5>
+              <p class="mt-4 text-sm" id="failureMessage">Your Account Is Active</p>
+            </div>
+            <div class="py-1"><button type="button" class="btn btn-sm btn-danger rounded-pill px-5" data-bs-dismiss="modal">Close</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
 <script src="{{ url_for('static', filename='js/damage.js')}}"></script>
 {% endblock body %}
-
