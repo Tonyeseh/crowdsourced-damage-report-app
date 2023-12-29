@@ -144,20 +144,19 @@ def verify_damage(current_user):
     """ verify a damage """
     try:
         data = dict(request.form)
-        print(data)
 
         if not data:
             return {
-                "message": "Please provide user details",
+                "message": "No Payload",
                 "data": None,
-                "error": "Bad request"
+                "status": "error"
             }, 400
 
         if 'damage_id' not in data.keys() and 'verify' not in data.key():
             return {
                 "message": "Invalid payload",
                 "data": None,
-                "error": "Bad request",
+                "status": "error",
             }, 400
             
         damage = storage.get(Damage, data.get('damage_id'))
@@ -165,8 +164,8 @@ def verify_damage(current_user):
             return {
                 "message": "Invalid damage instance",
                 "data": None,
-                "error": "Bad request"
-            }, 400
+                "status": "error"
+            }, 404
             
         job = None
         for j in damage.working_on:
@@ -180,8 +179,8 @@ def verify_damage(current_user):
             return {
                 "message": "Damage is not yet being worked on",
                 "data": None,
-                "error": "Bad request"
-            }, 400
+                "status": "error"
+            }, 404
             
         if data.get('verify') == 'Yes':
             job.status = "Done"
@@ -195,14 +194,22 @@ def verify_damage(current_user):
             job.save()
             damage.save()
             
-
+        return_data = damage.to_dict()
+        print(return_data)
+        try:
+            del return_data['working_on']
+        except Exception as e:
+            pass
+        
         return {
-            "data": "Updated"
+            "status": "success",
+            "data": return_data,
+            "message": "Repair Verified"
         }
 
     except Exception as e:
         return {
-            "message": "Something went wrong1!",
-            "error": str(e),
+            "message": "Something went wrong!. " + str(e),
+            "status": "error",
             "data": None
         }, 500
