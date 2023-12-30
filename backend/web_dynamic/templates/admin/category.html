@@ -51,7 +51,7 @@
                         <a href="javascript:;" class="text-secondary font-weight-bold text-xs mx-2" data-cat-id={{cat.id}} data-toggle="tooltip" data-original-title="Edit Damage" onclick="editRecord(this)" data-bs-toggle="modal" data-bs-target="#editModal">
                           <i class="material-icons opacity-10">edit</i>
                         </a>
-                        <a href="javascript:;" class="text-secondary text-xs text-danger mx-2" data-cat-id={{cat.id}} data-toggle="tooltip" data-original-title="Delete Location" onclick="deleteRecord(this)" data-bs-toggle="modal">
+                        <a href="javascript:;" class="text-secondary text-xs text-danger mx-2" data-cat-id={{cat.id}} data-toggle="tooltip" data-original-title="Delete Location" onclick="deleteRecord(this)" >
                             <i class="material-icons opacity-10">close</i>
                         </a>
                       </td>
@@ -76,16 +76,15 @@
               </div>
             </div>
             <div class="card-body px-0 pb-2 mx-3">
-
-                <form role="form">
-                    <div class="input-group input-group-outline mb-3">
-                      <label class="form-label">Category Name</label>
-                      <input type="text" class="form-control" id="category-name">
-                        <div class="text-center input-group-append">
-                            <button type="button" class="btn bg-gradient-primary btn-lg w-100 mb-0" id="submit-category">Add</button>
-                        </div>
-                    </div>
-                  </form>
+              <form role="form">
+                  <div class="input-group input-group-outline mb-3">
+                    <label class="form-label">Category Name</label>
+                    <input type="text" class="form-control" id="category-name">
+                      <div class="text-center input-group-append">
+                          <button type="button" class="btn bg-gradient-primary btn-lg w-100 mb-0" id="submit-category">Add</button>
+                      </div>
+                  </div>
+                </form>
             </div>
           </div>
         </div>

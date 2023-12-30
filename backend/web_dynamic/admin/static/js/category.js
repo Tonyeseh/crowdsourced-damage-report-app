@@ -3,6 +3,7 @@ categorySubmit = document.getElementById("submit-category")
 alertBox = document.getElementById('information')
 tbody = document.getElementById("table-body")
 successModal = document.getElementById('successModal')
+deleteButton = document.getElementById('deleteButton')
 
 categoryName.value = ""
 
@@ -94,7 +95,7 @@ editRecord = (elem) => {
 
   document.getElementById("catName").value = document.getElementById(`cat-name-${catId}`).innerText
 
-  document.getElementById('editButton').addEventListener('click', (e) => {
+  document.getElementById('editButton').addEventListener('click', function editHandler (e) {
     e.preventDefault()
 
     if (document.getElementById("catName").value) {
@@ -122,37 +123,39 @@ editRecord = (elem) => {
         }
       })
     }
+    document.getElementById('editButton').addEventListener('click', editHandler)
   })
 }
 
 
-deleteRecord = (elem) => {
+function deleteRecord (elem) {
   $("#deleteModal").modal('show')
   catId = elem.dataset.catId
-  deleteButton = document.getElementById('deleteButton')
+  deleteButton.setAttribute('data-id', catId)
 
-  deleteButton.addEventListener('click', (e) => {
-      e.preventDefault()
-
-      fetch(`http://127.0.0.1:5001/api/v1/categories/${catId}`, {
-          method: "DELETE",
-          headers: {
-              Authorization: `Bearer ${getCookie('admin_access_token')}`
-          }
-      }).then(res => res.json())
-      .then(data => {
-        $("#deleteModal").modal('hide')
-        if (data.status === 'success') {
-          document.getElementById('successMessage').innerText = data.message
-          $("#successModal").modal('show');
-
-          elem.parentNode.parentNode.remove()
+  
+  deleteButton.addEventListener('click', function deleteFunc (e) {
+    e.preventDefault()
+  
+    fetch(`http://127.0.0.1:5001/api/v1/categories/${catId}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${getCookie('admin_access_token')}`
         }
-        else {
-          document.getElementById("failureMessage").innerText = data.message
-          $("#failureModal").modal('show')
-        }
-      })
+    }).then(res => res.json())
+    .then(data => {
+      $("#deleteModal").modal('hide')
+      if (data.status === 'success') {
+        document.getElementById('successMessage').innerText = data.message
+        $("#successModal").modal('show');
+  
+        elem.parentNode.parentNode.remove()
+      }
+      else {
+        document.getElementById("failureMessage").innerText = data.message
+        $("#failureModal").modal('show')
+      }
+    })
+    deleteButton.removeEventListener('click', deleteFunc)
   })
 }
-
