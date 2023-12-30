@@ -110,7 +110,7 @@ deleteRecord = (elem) => {
     facId = elem.dataset.facId
     deleteButton = document.getElementById('deleteButton')
 
-    deleteButton.addEventListener('click', (e) => {
+    deleteButton.addEventListener('click', function deleteFunc(e) {
         e.preventDefault()
 
         fetch(`http://127.0.0.1:5001/api/v1/facilities/${facId}`, {
@@ -132,5 +132,6 @@ deleteRecord = (elem) => {
                 $("#failureModal").modal('show')
             }
         })
+        deleteButton.removeEventListener('click', deleteFunc)
     })
 }

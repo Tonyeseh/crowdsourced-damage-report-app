@@ -24,7 +24,7 @@ function deleteHelper(elem) {
     deleteButton = document.getElementById('deleteButton')
     deleteButton.setAttribute('data-damage-id', elem.dataset.damageId)
 
-    deleteButton.addEventListener('click', (e) => {
+    deleteButton.addEventListener('click', function deleteFunc(e) {
         e.preventDefault()
         
         fetch(`http://127.0.0.1:5001/api/v1/damages/${elem.dataset.damageId}`, {
@@ -46,6 +46,7 @@ function deleteHelper(elem) {
                 $("#failureModal").modal('show')
             }
     })
+    deleteButton.removeEventListener('click', deleteFunc)
     })
 }
 
@@ -63,13 +64,11 @@ function editRecord(elem) {
         });
     })
 
-    
-
     editButton = document.getElementById('editButton')
     damageRow = document.getElementById(elem.dataset.damageId)
     damageState = document.getElementById(`state-${elem.dataset.damageId}`)
     damageWorker = document.getElementById(`worker-${elem.dataset.damageId}`)
-    editButton.addEventListener('click', (e) => {
+    editButton.addEventListener('click', function editFunc(e) {
         e.preventDefault()
 
         if (workerSelect.value) {
@@ -99,5 +98,6 @@ function editRecord(elem) {
             }
         })
     }
+    editButton.removeEventListener('click', editFunc)
     })
 }
