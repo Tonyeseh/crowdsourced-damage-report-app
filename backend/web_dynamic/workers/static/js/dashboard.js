@@ -27,6 +27,7 @@ function confirmStatus(elem) {
 
 function updateStatus(elem) {
     workId = elem.dataset.workId
+    console.log(workId)
     
     form = new FormData()
     form.append('job_id', workId)
@@ -38,8 +39,20 @@ function updateStatus(elem) {
             Authorization: `Bearer ${getCookie('worker_access_token')}`
         }
     }).then(res => res.json())
-    .then(data => console.log(data))
+    .then(data => {
+        console.log(data)
+        $('#doneModal').modal('hide')
+        if (data.status == "success") {
+            document.getElementById('successMessage').innerText = data.message
+            $("#successModal").modal('show');
+            document.getElementById(`job-${workId}`).remove()
+        }
+        else {
+            document.getElementById("failureMessage").innerText = data.message
+            $("#failureModal").modal('show')
+        }
 
-    document.getElementById('exampleModal').style.display = 'none'
+    })
+
 
 }

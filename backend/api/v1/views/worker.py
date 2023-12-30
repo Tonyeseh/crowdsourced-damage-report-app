@@ -16,8 +16,10 @@ def update_job_status(current_user):
         
         if not data.get('job_id', None) or not data.get('status', None):
             return {
-                "error": "Invalid payload"
-            }
+                "status": "error",
+                "data": None,
+                "message": "Invalid payload"
+            }, 400
         
         job = None
         for j in jobs:
@@ -25,17 +27,36 @@ def update_job_status(current_user):
                 job = j
         if not job:
             return {
-                "error": "Invalid job id"
-            }
+                "status": "error",
+                "data": None,
+                "message": "Invalid Job ID"
+            }, 404
+        if job.status == "Done":
+            return {
+                "status": "error",
+                "data": None,
+                "message": "Already marked as done"
+            }, 400
         job.status = "Done"
         damage = job.damages
         damage.state = "Awaiting Verification"
         damage.save()
         job.save()
+        
+        return_data = job.to_dict()
+        try:
+            del return_data['damages']
+        except:
+            pass
+        
         return {
-            "status": True
-        }
+            "status": "success",
+            "data": return_data,
+            "message": "Job marked as Done"
+        }, 200
     except Exception as e:
         return {
-            "error": str(e)
-         }
+                "status": "error",
+                "data": None,
+                "message": str(e)
+            }, 500
